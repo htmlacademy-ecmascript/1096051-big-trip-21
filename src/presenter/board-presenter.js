@@ -5,6 +5,8 @@ import NewPoint from '../view/new-point-view.js';
 import BoardView from '../view/board-view.js';
 import { render, RenderPosition } from '../render.js';
 
+const COUNT_ITEMS = 3;
+
 export default class BoardPresenter {
   boardComponent = new BoardView();
   tripListComponent = new TripListView();
@@ -19,7 +21,7 @@ export default class BoardPresenter {
     render(this.tripListComponent, this.boardComponent.getElement());
     render(new NewPoint(), this.tripListComponent.getElement(), RenderPosition.AFTERBEGIN);
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < COUNT_ITEMS; i++) {
       render(new TripItemView(), this.tripListComponent.getElement());
     }
   }
