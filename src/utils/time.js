@@ -1,5 +1,12 @@
 import dayjs from 'dayjs';
-import { FORMAT_EVENT } from '../const.js';
+
+const FORMAT_EVENT = {
+  DATE: 'DD MMM',
+  TIME: 'hh:mm',
+  ATRIBUTE: 'YYYY-MM-DDTHH:mm',
+  FORM: 'YY/MM/DD HH:mm',
+  TRIP_DATE: 'MMM DD'
+};
 
 function getHumanizeEventTime(date, type) {
   return dayjs(date).format(FORMAT_EVENT[type]);

@@ -123,11 +123,4 @@ const DESTNATIONS = [
   }
 ];
 
-const FORMAT_EVENT = {
-  DATE: 'DD MMM',
-  TIME: 'hh:mm',
-  ATRIBUTE: 'YYYY-MM-DDTHH:mm',
-  FORM: 'YY/MM/DD HH:mm'
-};
-
-export {POINT_TYPES, OFFERS, DESTNATIONS, FORMAT_EVENT };
+export {POINT_TYPES, OFFERS, DESTNATIONS };

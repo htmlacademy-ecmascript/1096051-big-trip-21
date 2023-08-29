@@ -16,7 +16,7 @@ const boardPresenter = new BoardPresenter({
   newPointModel
 });
 
-render(new TripInfoView(), tripMain, RenderPosition.AFTERBEGIN);
+render(new TripInfoView({points: pointsModel.points}), tripMain, RenderPosition.AFTERBEGIN);
 render(new TripFiltersView(), tripFilters, RenderPosition.BEFOREEND);
 
 boardPresenter.init();

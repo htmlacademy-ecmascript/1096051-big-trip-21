@@ -3,6 +3,7 @@ import TripListView from '../view/trip-list-view.js';
 import TripItemView from '../view/trip-item.js';
 import TripItemEditView from '../view/trip-item-edit.js';
 import BoardView from '../view/board-view.js';
+import TripListEmptyView from '../view/trip-list-empty-view.js';
 import { render, replace } from '../framework/render.js';
 export default class BoardPresenter {
   #boardContainer;
@@ -25,10 +26,14 @@ export default class BoardPresenter {
 
   #render() {
     render(this.#boardComponent, this.#boardContainer);
-    render(new TripSortsView(), this.#boardComponent.element);
-    render(this.#tripListComponent, this.#boardComponent.element);
 
-    this.#boardPoints.forEach((point) => this.#renderPoint(point));
+    if (!this.#boardPoints.length) {
+      render(new TripListEmptyView, this.#boardComponent.element);
+    } else {
+      render(new TripSortsView(), this.#boardComponent.element);
+      render(this.#tripListComponent, this.#boardComponent.element);
+      this.#boardPoints.forEach((point) => this.#renderPoint(point));
+    }
   }
 
   #renderPoint(point) {
