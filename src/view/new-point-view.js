@@ -28,8 +28,7 @@ function createTypeItemTemplate(type) {
     </div>`;
 }
 
-function createNewPointTemplate({types, offers, destinations}) {
-  const typeOffers = offers[types.FLIGHT];
+function createNewPointTemplate({types, pointOffers, destinations}) {
   const firstDestination = destinations[0];
   const {description, photos, name} = firstDestination;
   return `
@@ -85,7 +84,7 @@ function createNewPointTemplate({types, offers, destinations}) {
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-            ${typeOffers.map((offer) => createOfferTemplate(offer)).join('')}
+            ${pointOffers.map((offer) => createOfferTemplate(offer)).join('')}
           </div>
         </section>
 
