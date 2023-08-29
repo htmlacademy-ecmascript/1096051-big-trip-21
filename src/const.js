@@ -51,18 +51,6 @@ const OFFERS = {
       price: 100,
     }
   ],
-  [POINT_TYPES.DRIVE]: [
-    {
-      id: 'comfort-class',
-      text: 'Switch to comfort class',
-      price: 120,
-    },
-    {
-      id: 'meal',
-      text: 'Add meal',
-      price: 15,
-    }
-  ],
   [POINT_TYPES.FLIGHT]: [
     {
       id: 'comfort-class',
@@ -135,4 +123,11 @@ const DESTNATIONS = [
   }
 ];
 
-export {POINT_TYPES, OFFERS, DESTNATIONS};
+const FORMAT_EVENT = {
+  DATE: 'DD MMM',
+  TIME: 'hh:mm',
+  ATRIBUTE: 'YYYY-MM-DDTHH:mm',
+  FORM: 'YY/MM/DD HH:mm'
+};
+
+export {POINT_TYPES, OFFERS, DESTNATIONS, FORMAT_EVENT };

@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createImageTemplate(url, name) {
   return `<img class="event__photo" src="${url}" alt="${name} photo"></img>`;
@@ -104,24 +104,15 @@ function createNewPointTemplate({types, pointOffers, destinations}) {
   `;
 }
 
-export default class NewPoint {
+export default class NewPoint extends AbstractView {
+  #newPointData;
+
   constructor(newPointData) {
-    this.newPointData = newPointData;
+    super();
+    this.#newPointData = newPointData;
   }
 
-  getTemplate() {
-    return createNewPointTemplate(this.newPointData);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createNewPointTemplate(this.#newPointData);
   }
 }
