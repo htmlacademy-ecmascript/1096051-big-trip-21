@@ -1,6 +1,6 @@
-import { createElement } from '../render.js';
-import { getHumanizeEventTime, getFormattedTime} from '../utils.js';
-import { OFFERS } from '../const.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { getDurationText, getHumanizeEventTime } from '../utils/time.js';
+import { getTypeOffers } from '../mock/offers.js';
 
 function isActiveFavorite(isFavorite) {
   return isFavorite ? 'event__favorite-btn--active' : '';
@@ -18,39 +18,6 @@ function createOfferTemplate(offer) {
   `;
 }
 
-function getDurationFormatTime (minutes, hours, days) {
-  let text = '';
-  if (days) {
-    text += `${getFormattedTime(days)}D `;
-  }
-
-  if (hours) {
-    text += `${getFormattedTime(hours)}H `;
-  }
-
-  text += `${getFormattedTime(minutes)}M`;
-
-  return text;
-}
-
-function getDurationText(startTime, endTime) {
-  const seconds = (endTime - startTime) / 1000;
-  let minutes = seconds / 60;
-  let hours;
-  let days;
-
-  if (minutes >= 60) {
-    hours = Math.floor(minutes / 60);
-    minutes %= 60;
-  }
-  if (hours >= 24) {
-    days = Math.floor(hours / 24);
-    hours %= 24;
-  }
-
-  return getDurationFormatTime(minutes, hours, days);
-}
-
 function createTripItemTemplate(point) {
   const {
     type,
@@ -59,22 +26,25 @@ function createTripItemTemplate(point) {
     endTime,
     isFavorite
   } = point;
+  const {name} = destination;
+
   const duration = getDurationText(startTime, endTime);
-  const offers = OFFERS[type];
+  const offers = getTypeOffers(type);
+  const itemsElements = offers.map((offer) => createOfferTemplate(offer)).join('');
 
   return `
     <li class="trip-events__item">
       <div class="event">
         <time class="event__date" datetime="2019-03-18">${getHumanizeEventTime(startTime, 'DATE')}</time>
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${destination}</h3>
+        <h3 class="event__title">${type} ${name}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T10:30">${getHumanizeEventTime(startTime, 'TIME')}</time>
+            <time class="event__start-time" datetime="${getHumanizeEventTime(startTime, 'ATRIBUTE')}">${getHumanizeEventTime(startTime, 'TIME')}</time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-18T11:00">${getHumanizeEventTime(endTime, 'TIME')}</time>
+            <time class="event__end-time" datetime="${getHumanizeEventTime(endTime, 'ATRIBUTE')}">${getHumanizeEventTime(endTime, 'TIME')}</time>
           </p>
           <p class="event__duration">${duration}</p>
         </div>
@@ -83,7 +53,7 @@ function createTripItemTemplate(point) {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${offers.map((offer) => createOfferTemplate(offer)).join('')}
+          ${itemsElements}
         </ul>
         <button class="event__favorite-btn ${isActiveFavorite(isFavorite)}" type="button">
           <span class="visually-hidden">Add to favorite</span>
@@ -99,24 +69,25 @@ function createTripItemTemplate(point) {
   `;
 }
 
-export default class TripItemView {
-  constructor({point}) {
-    this.point = point;
+export default class TripItemView extends AbstractView {
+  #point = null;
+  #handleButtonClick = null;
+
+  constructor({point, onArrowClick}) {
+    super();
+    this.#point = point;
+    this.#handleButtonClick = onArrowClick;
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#arrowButtonClickHandler);
   }
 
-  getTemplate() {
-    return createTripItemTemplate(this.point);
+  get template() {
+    return createTripItemTemplate(this.#point);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #arrowButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleButtonClick();
+  };
 }
