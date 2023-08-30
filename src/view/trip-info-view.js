@@ -40,7 +40,7 @@ export default class TripInfoView extends AbstractView {
   }
 
   #getDestinations() {
-    return this.#points.map((point) => point.destination.name);
+    return this.#points.map((point) => point.destination);
   }
 
   #getStartTripDate() {

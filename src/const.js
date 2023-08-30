@@ -91,36 +91,12 @@ const OFFERS = {
 };
 
 const DESTNATIONS = [
-  {
-    name: 'Geneva',
-    description: 'finibus eget, sollicitudin eget ante. Phasellus eros mauris',
-    photos: ['https://loremflickr.com/248/152?random=3']
-  },
-  {
-    name: 'Moscow',
-    description: 'ipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac ',
-    photos: ['https://loremflickr.com/248/152?random=4']
-  },
-  {
-    name: 'Los Angeles',
-    description: 'condimentum sed nibh vitae',
-    photos: ['https://loremflickr.com/248/152?random=5']
-  },
-  {
-    name: 'California',
-    description: 'In rutrum ac purus sit amet tempus',
-    photos: ['https://loremflickr.com/248/152?random=6']
-  },
-  {
-    name: 'Mexico',
-    description: 'consectetur adipiscing elit',
-    photos: ['https://loremflickr.com/248/152?random=7']
-  },
-  {
-    name: 'Paris',
-    description: 'lectus varius viverra. Nullam nunc ex, convallis',
-    photos: ['https://loremflickr.com/248/152?random=8']
-  }
+  'Geneva',
+  'Moscow',
+  'Los Angeles',
+  'California',
+  'Mexico',
+  'Paris',
 ];
 
 export {POINT_TYPES, OFFERS, DESTNATIONS };

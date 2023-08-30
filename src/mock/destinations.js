@@ -1,7 +1,15 @@
 import { DESTNATIONS } from '../const.js';
+import { getRandomPhotos } from '../utils/photos.js';
+import { generateRandomText, getRandomArrayElement } from '../utils/utils.js';
 
-function getDestinationsNames() {
-  return DESTNATIONS.map((data) => data.name);
+const MAX_PHOTOS = 5;
+
+function createRandomDestination() {
+  return {
+    name: getRandomArrayElement(DESTNATIONS),
+    description: generateRandomText(),
+    photos: getRandomPhotos(MAX_PHOTOS),
+  };
 }
 
-export {getDestinationsNames};
+export { createRandomDestination };

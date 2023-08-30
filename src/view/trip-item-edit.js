@@ -1,6 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { getTypes } from '../mock/types.js';
-import { getDestinationsNames } from '../mock/destinations.js';
 import { getHumanizeEventTime } from '../utils/time.js';
 import { getTypeOffers } from '../mock/offers.js';
 
@@ -32,7 +31,7 @@ function createOfferTemplate(offer) {
   `;
 }
 
-function createTripItemEditTemplate(point) {
+function createTripItemEditTemplate(point, names) {
   const {
     destination,
     type,
@@ -45,7 +44,7 @@ function createTripItemEditTemplate(point) {
   const offers = getTypeOffers(type);
   const offersElements = offers.map((offer) => createOfferTemplate(offer)).join('');
   const typesElements = Object.values(getTypes()).map((item) => createTypeItemTemplate(item)).join('');
-  const destionationsElements = Object.values(getDestinationsNames()).map((item) => createDestinationTemplate(item)).join('');
+  const destionationsElements = names.map((item) => createDestinationTemplate(item)).join('');
 
   return `
     <li class="trip-events__item">
@@ -119,12 +118,14 @@ function createTripItemEditTemplate(point) {
 
 export default class TripItemEditView extends AbstractView{
   #point = null;
+  #destinationsNames = null;
   #handleFormSubmit = null;
   #handleButtonClick = null;
 
-  constructor({point, onFormSubmit, onArrowClick}) {
+  constructor({point, destinationsNames, onFormSubmit, onArrowClick}) {
     super();
     this.#point = point;
+    this.#destinationsNames = destinationsNames;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleButtonClick = onArrowClick;
 
@@ -146,6 +147,6 @@ export default class TripItemEditView extends AbstractView{
   };
 
   get template() {
-    return createTripItemEditTemplate(this.#point);
+    return createTripItemEditTemplate(this.#point, this.#destinationsNames);
   }
 }
