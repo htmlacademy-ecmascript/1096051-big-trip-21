@@ -14,7 +14,7 @@ export default class NewPointModel {
     return {
       types: POINT_TYPES,
       destinations: this.#destinations,
-      pointOffers: pointOffers
+      pointOffers
     };
   }
 }
