@@ -35,4 +35,8 @@ function generateRandomText() {
   return getRandomArrayElements(wordsList);
 }
 
-export { getRandomArrayElement, getRandomPositiveInteger, generateRandomText };
+function getRandomBoolean() {
+  return Boolean(Math.round(Math.random()));
+}
+
+export { getRandomArrayElement, getRandomPositiveInteger, generateRandomText, getRandomBoolean};

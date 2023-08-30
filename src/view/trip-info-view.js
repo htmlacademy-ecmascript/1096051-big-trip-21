@@ -2,7 +2,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { getHumanizeEventTime } from '../utils/time.js';
 
 function createTripInfoTemplate(price, destinations, date) {
-  const destinationsText = destinations.join(' \u2013 ');
+  const destinationsText = destinations.join(' – ');
 
   return `
     <section class="trip-main__trip-info  trip-info">
@@ -40,16 +40,16 @@ export default class TripInfoView extends AbstractView {
   }
 
   #getDestinations() {
-    return this.#points.map((point) => point.destination);
+    return this.#points.map(({destination}) => destination.name);
   }
 
   #getStartTripDate() {
-    const minDate = Math.min(...this.#points.map((point) => point.startTime));
+    const minDate = Math.min(...this.#points.map(({startTime}) => startTime));
     return getHumanizeEventTime(minDate, 'TRIP_DATE');
   }
 
   #getEndTripDate() {
-    const maxDate = Math.max(...this.#points.map((point) => point.startTime));
+    const maxDate = Math.max(...this.#points.map(({endTime}) => endTime));
     return getHumanizeEventTime(maxDate, 'TRIP_DATE');
   }
 
@@ -58,10 +58,10 @@ export default class TripInfoView extends AbstractView {
     const endDate = this.#getEndTripDate().split(' ');
     const startDateMonth = startDate[0];
     const endDateMonth = endDate[0];
-    let text = `${this.#getStartTripDate()} \u2013 ${this.#getEndTripDate()}`;
+    let text = `${this.#getStartTripDate()} – ${this.#getEndTripDate()}`;
 
     if (startDateMonth === endDateMonth) {
-      text = `${startDate.join(' ')} \u2013 ${endDate[1]}`;
+      text = `${startDate.join(' ')} – ${endDate[1]}`;
     }
 
     return text;

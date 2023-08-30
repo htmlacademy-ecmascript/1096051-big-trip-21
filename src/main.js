@@ -9,8 +9,8 @@ import { render, RenderPosition } from './render.js';
 const tripMain = document.querySelector('.trip-main');
 const tripFilters = tripMain.querySelector('.trip-controls__filters');
 const tripEvents = document.querySelector('.trip-events');
-const pointsModel = new PointsModel();
 const destinationsModel = new DestinationsModel();
+const pointsModel = new PointsModel(destinationsModel.destinations);
 const newPointModel = new NewPointModel(destinationsModel.destinations);
 const boardPresenter = new BoardPresenter({
   boardContainer: tripEvents,

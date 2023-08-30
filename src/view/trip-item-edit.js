@@ -17,9 +17,7 @@ function createTypeItemTemplate(type) {
     </div>`;
 }
 
-function createOfferTemplate(offer) {
-  const {id, text, price} = offer;
-
+function createOfferTemplate({id, text, price}) {
   return `
     <div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}-1" type="checkbox" name="event-offer-${id}" checked>
@@ -41,11 +39,10 @@ function createTripItemEditTemplate(point, names) {
     price
   } = point;
   const {name, description} = destination;
-
   const offers = getTypeOffers(type);
-  const offersElements = offers.map((offer) => createOfferTemplate(offer)).join('');
-  const typesElements = Object.values(getTypes()).map((item) => createTypeItemTemplate(item)).join('');
-  const destionationsElements = names.map((item) => createDestinationTemplate(item)).join('');
+  const offersElements = offers.map(createOfferTemplate).join('');
+  const typesElements = Object.values(getTypes()).map(createTypeItemTemplate).join('');
+  const destionationsElements = names.map(createDestinationTemplate).join('');
 
   return `
     <li class="trip-events__item">

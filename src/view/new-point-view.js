@@ -46,7 +46,7 @@ function createNewPointTemplate({types, pointOffers, destinations}) {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-              ${Object.values(types).map((type) => createTypeItemTemplate(type)).join('')}
+              ${Object.values(types).map(createTypeItemTemplate).join('')}
             </fieldset>
           </div>
         </div>
@@ -57,7 +57,7 @@ function createNewPointTemplate({types, pointOffers, destinations}) {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
           <datalist id="destination-list-1">
-            ${destinations.map((destination) => createDestinationOptionTemplate(destination.name)).join('')}
+            ${destinations.map(createDestinationOptionTemplate).join('')}
           </datalist>
         </div>
 
@@ -85,7 +85,7 @@ function createNewPointTemplate({types, pointOffers, destinations}) {
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-            ${pointOffers.map((offer) => createOfferTemplate(offer)).join('')}
+            ${pointOffers.map(createOfferTemplate).join('')}
           </div>
         </section>
 
