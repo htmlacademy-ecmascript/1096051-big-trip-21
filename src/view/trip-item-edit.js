@@ -1,6 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { getTypes } from '../mock/types.js';
-import { getDestinationsNames } from '../mock/destinations.js';
 import { getHumanizeEventTime } from '../utils/time.js';
 import { getTypeOffers } from '../mock/offers.js';
 
@@ -10,16 +9,15 @@ function createDestinationTemplate(destination) {
 }
 
 function createTypeItemTemplate(type) {
+  const typeLower = type.toLowerCase();
   return `
     <div class="event__type-item">
-      <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type.toLowerCase()}">
-      <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type.toLowerCase()}-1">${type}</label>
+      <input id="event-type-${typeLower}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeLower}">
+      <label class="event__type-label  event__type-label--${typeLower}" for="event-type-${typeLower}-1">${type}</label>
     </div>`;
 }
 
-function createOfferTemplate(offer) {
-  const {id, text, price} = offer;
-
+function createOfferTemplate({id, text, price}) {
   return `
     <div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}-1" type="checkbox" name="event-offer-${id}" checked>
@@ -32,19 +30,19 @@ function createOfferTemplate(offer) {
   `;
 }
 
-function createTripItemEditTemplate(point) {
+function createTripItemEditTemplate(point, names) {
   const {
     destination,
     type,
     startTime,
-    endTime
+    endTime,
+    price
   } = point;
   const {name, description} = destination;
-
   const offers = getTypeOffers(type);
-  const offersElements = offers.map((offer) => createOfferTemplate(offer)).join('');
-  const typesElements = Object.values(getTypes()).map((item) => createTypeItemTemplate(item)).join('');
-  const destionationsElements = Object.values(getDestinationsNames()).map((item) => createDestinationTemplate(item)).join('');
+  const offersElements = offers.map(createOfferTemplate).join('');
+  const typesElements = Object.values(getTypes()).map(createTypeItemTemplate).join('');
+  const destionationsElements = names.map(createDestinationTemplate).join('');
 
   return `
     <li class="trip-events__item">
@@ -88,7 +86,7 @@ function createTripItemEditTemplate(point) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="160">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -118,12 +116,14 @@ function createTripItemEditTemplate(point) {
 
 export default class TripItemEditView extends AbstractView{
   #point = null;
+  #destinationsNames = null;
   #handleFormSubmit = null;
   #handleButtonClick = null;
 
-  constructor({point, onFormSubmit, onArrowClick}) {
+  constructor({point, destinationsNames, onFormSubmit, onArrowClick}) {
     super();
     this.#point = point;
+    this.#destinationsNames = destinationsNames;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleButtonClick = onArrowClick;
 
@@ -145,6 +145,6 @@ export default class TripItemEditView extends AbstractView{
   };
 
   get template() {
-    return createTripItemEditTemplate(this.#point);
+    return createTripItemEditTemplate(this.#point, this.#destinationsNames);
   }
 }

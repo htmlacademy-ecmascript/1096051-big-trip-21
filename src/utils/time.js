@@ -1,5 +1,22 @@
 import dayjs from 'dayjs';
-import { FORMAT_EVENT } from '../const.js';
+import { getRandomPositiveInteger } from './utils';
+
+const FORMAT_EVENT = {
+  DATE: 'DD MMM',
+  TIME: 'hh:mm',
+  ATRIBUTE: 'YYYY-MM-DDTHH:mm',
+  FORM: 'YY/MM/DD HH:mm',
+  TRIP_DATE: 'MMM DD'
+};
+
+const TIME = {
+  YEAR: 2023,
+  MAX_MONTHS: 12,
+  MAX_DAYS: 31,
+  MAX_HOURS: 24,
+  MAX_MINUTES: 60,
+  MAX_SECONDS: 60,
+};
 
 function getHumanizeEventTime(date, type) {
   return dayjs(date).format(FORMAT_EVENT[type]);
@@ -42,4 +59,22 @@ function getDurationText(startTime, endTime) {
   return getDurationFormatTime(minutes, hours, days);
 }
 
-export {getHumanizeEventTime, getDurationText};
+function getRandomDate() {
+  const month = getRandomPositiveInteger(1, TIME.MAX_MONTHS);
+  const day = getRandomPositiveInteger(1, TIME.MAX_DAYS);
+  const hour = getRandomPositiveInteger(1, TIME.MAX_HOURS);
+  const minute = getRandomPositiveInteger(1, TIME.MAX_MINUTES);
+  const second = getRandomPositiveInteger(1, TIME.MAX_SECONDS);
+
+
+  return new Date(
+    TIME.YEAR,
+    month,
+    day,
+    hour,
+    minute,
+    second
+  );
+}
+
+export {getHumanizeEventTime, getDurationText, getRandomDate};

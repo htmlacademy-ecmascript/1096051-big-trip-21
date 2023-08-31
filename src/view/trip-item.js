@@ -24,13 +24,14 @@ function createTripItemTemplate(point) {
     destination,
     startTime,
     endTime,
-    isFavorite
+    isFavorite,
+    price
   } = point;
   const {name} = destination;
 
   const duration = getDurationText(startTime, endTime);
   const offers = getTypeOffers(type);
-  const itemsElements = offers.map((offer) => createOfferTemplate(offer)).join('');
+  const itemsElements = offers.map(createOfferTemplate).join('');
 
   return `
     <li class="trip-events__item">
@@ -49,7 +50,7 @@ function createTripItemTemplate(point) {
           <p class="event__duration">${duration}</p>
         </div>
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">20</span>
+          &euro;&nbsp;<span class="event__price-value">${price}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
