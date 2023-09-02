@@ -52,7 +52,7 @@ export default class BoardPresenter {
 
   #resetPoints = () => {
     this.#pointsPresenters.forEach((presenter) => presenter.setDefaultStatus());
-  }
+  };
 
   #renderPoint({ point }) {
     const pointPresenter = new PointPresenter({
