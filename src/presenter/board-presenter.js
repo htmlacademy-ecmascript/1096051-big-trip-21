@@ -1,18 +1,24 @@
 import TripSortsView from '../view/trip-sorts-view.js';
 import TripListView from '../view/trip-list-view.js';
-import TripItemView from '../view/trip-item.js';
-import TripItemEditView from '../view/trip-item-edit.js';
 import BoardView from '../view/board-view.js';
 import TripListEmptyView from '../view/trip-list-empty-view.js';
-import { render, replace } from '../framework/render.js';
+import { render } from '../framework/render.js';
+import PointPresenter from './point-presenter.js';
+import { updateItem } from '../utils/utils.js';
 export default class BoardPresenter {
   #boardContainer = null;
+
   #pointsModel = null;
   #newPointModel = null;
   #destinationsModel = null;
+
   #boardPoints = null;
+  #destinationsNames = null;
+
   #boardComponent = new BoardView();
   #tripListComponent = new TripListView();
+
+  #pointsPresenters = new Map();
 
   constructor({boardContainer, pointsModel, newPointModel, destinationsModel}) {
     this.#boardContainer = boardContainer;
@@ -23,11 +29,11 @@ export default class BoardPresenter {
 
   init() {
     this.#boardPoints = [...this.#pointsModel.points];
+    this.#destinationsNames = [this.#destinationsModel.names];
     this.#render();
   }
 
   #render() {
-    const destinationsNames = this.#destinationsModel.names;
     render(this.#boardComponent, this.#boardContainer);
 
     if (!this.#boardPoints.length) {
@@ -35,50 +41,31 @@ export default class BoardPresenter {
     } else {
       render(new TripSortsView(), this.#boardComponent.element);
       render(this.#tripListComponent, this.#boardComponent.element);
-      this.#boardPoints.forEach((point) => this.#renderPoint(point, destinationsNames));
+      this.#boardPoints.forEach((point) => this.#renderPoint({ point }));
     }
   }
 
-  #renderPoint(point, destinationsNames) {
-    const closeForm = () => {
-      replaceFormToCard();
-      window.removeEventListener('keydown', escKeydownHandler);
-    };
+  #handlePointDataChange = (updatePoint) => {
+    this.#boardPoints = updateItem(this.#boardPoints, updatePoint);
+    this.#pointsPresenters.get(updatePoint.id).init(updatePoint, this.#destinationsNames);
+  };
 
-    const openForm = () => {
-      replaceCardToForm();
-      window.addEventListener('keydown', escKeydownHandler);
-    };
+  #resetPoints = () => {
+    this.#pointsPresenters.forEach((presenter) => presenter.setDefaultStatus());
+  };
 
-    const pointComponent = new TripItemView({
-      point,
-      onArrowClick: openForm
+  #renderPoint({ point }) {
+    const pointPresenter = new PointPresenter({
+      tripListComponent: this.#tripListComponent,
+      onDataChange: this.#handlePointDataChange,
+      resetPoints: this.#resetPoints
     });
-
-    const pointEditComponent = new TripItemEditView({
-      point,
-      destinationsNames,
-      onFormSubmit: closeForm,
-      onArrowClick: closeForm
-    });
-
-    function escKeydownHandler (evt) {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceFormToCard();
-        window.removeEventListener('keydown', escKeydownHandler);
-      }
-    }
-
-
-    function replaceCardToForm() {
-      replace(pointEditComponent, pointComponent);
-    }
-
-    function replaceFormToCard() {
-      replace(pointComponent, pointEditComponent);
-    }
-
-    render(pointComponent, this.#tripListComponent.element);
+    pointPresenter.init(point, this.#destinationsModel.names);
+    this.#pointsPresenters.set(point.id, pointPresenter);
   }
+
+  // #clearPoints() {
+  //   this.#pointsPresenters.forEach((pesenter) => pesenter.destroy());
+  //   this.#pointsPresenters.clear();
+  // }
 }

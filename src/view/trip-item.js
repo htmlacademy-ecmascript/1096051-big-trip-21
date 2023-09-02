@@ -72,23 +72,33 @@ function createTripItemTemplate(point) {
 
 export default class TripItemView extends AbstractView {
   #point = null;
-  #handleButtonClick = null;
 
-  constructor({point, onArrowClick}) {
+  #handleArrowClick = null;
+  #handleFavoriteClick = null;
+
+  constructor({point, onArrowClick, onFavoriteChange}) {
     super();
     this.#point = point;
-    this.#handleButtonClick = onArrowClick;
+    this.#handleArrowClick = onArrowClick;
+    this.#handleFavoriteClick = onFavoriteChange;
 
     this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#arrowButtonClickHandler);
+      .addEventListener('click', this.#arrowClickHandler);
+    this.element.querySelector('.event__favorite-btn')
+      .addEventListener('click', this.#favoriteClickHandle);
   }
 
   get template() {
     return createTripItemTemplate(this.#point);
   }
 
-  #arrowButtonClickHandler = (evt) => {
+  #arrowClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleButtonClick();
+    this.#handleArrowClick();
+  };
+
+  #favoriteClickHandle = (evt) => {
+    evt.preventDefault();
+    this.#handleFavoriteClick();
   };
 }
