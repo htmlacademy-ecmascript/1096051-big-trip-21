@@ -99,4 +99,9 @@ const DESTNATIONS = [
   'Paris',
 ];
 
-export {POINT_TYPES, OFFERS, DESTNATIONS };
+const Mod = {
+  DEFAULT: 'default',
+  EDIT: 'edit'
+};
+
+export {POINT_TYPES, OFFERS, DESTNATIONS, Mod };

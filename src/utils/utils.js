@@ -39,4 +39,8 @@ function getRandomBoolean() {
   return Boolean(Math.round(Math.random()));
 }
 
-export { getRandomArrayElement, getRandomPositiveInteger, generateRandomText, getRandomBoolean};
+function updateItem(points, update) {
+  return points.map((point) => point.id === update.id ? update : point);
+}
+
+export { getRandomArrayElement, getRandomPositiveInteger, generateRandomText, getRandomBoolean, updateItem};
