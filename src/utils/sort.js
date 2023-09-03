@@ -3,7 +3,7 @@ import { getTypeOffers } from '../mock/offers.js';
 import { getTimeDiff } from './time.js';
 import { getLocaleCompare } from './utils.js';
 
-const sorter = {
+const Sorter = {
   [SORTS.EVENT.toLowerCase()]: sortByEvent,
   [SORTS.TIME.toLowerCase()]: sortByTime,
   [SORTS.PRICE.toLowerCase()]: sortByPrice,
@@ -47,7 +47,7 @@ function sortByOffers(a, b) {
 }
 
 function sortPoints(points, sortType = 'day') {
-  return points.sort(sorter[sortType]);
+  return points.sort(Sorter[sortType]);
 }
 
 export { sortPoints };
