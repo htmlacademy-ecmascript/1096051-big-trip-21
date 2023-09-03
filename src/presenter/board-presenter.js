@@ -2,9 +2,10 @@ import TripSortsView from '../view/trip-sorts-view.js';
 import TripListView from '../view/trip-list-view.js';
 import BoardView from '../view/board-view.js';
 import TripListEmptyView from '../view/trip-list-empty-view.js';
-import { render } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
+import { render } from '../framework/render.js';
 import { updateItem } from '../utils/utils.js';
+import { sortPoints } from '../utils/sort.js';
 export default class BoardPresenter {
   #boardContainer = null;
 
@@ -13,6 +14,7 @@ export default class BoardPresenter {
   #destinationsModel = null;
 
   #boardPoints = null;
+  #copyBoardPoints = null;
   #destinationsNames = null;
 
   #boardComponent = new BoardView();
@@ -29,6 +31,7 @@ export default class BoardPresenter {
 
   init() {
     this.#boardPoints = [...this.#pointsModel.points];
+    this.#copyBoardPoints = sortPoints([...this.#boardPoints]);
     this.#destinationsNames = [this.#destinationsModel.names];
     this.#render();
   }
@@ -37,17 +40,23 @@ export default class BoardPresenter {
     render(this.#boardComponent, this.#boardContainer);
 
     if (!this.#boardPoints.length) {
-      render(new TripListEmptyView, this.#boardComponent.element);
+      this.#renderEmptyList();
     } else {
-      render(new TripSortsView(), this.#boardComponent.element);
-      render(this.#tripListComponent, this.#boardComponent.element);
-      this.#boardPoints.forEach((point) => this.#renderPoint({ point }));
+      this.#renderSorts();
+      this.#renderList();
+      this.#renderPoints();
     }
   }
 
   #handlePointDataChange = (updatePoint) => {
     this.#boardPoints = updateItem(this.#boardPoints, updatePoint);
     this.#pointsPresenters.get(updatePoint.id).init(updatePoint, this.#destinationsNames);
+  };
+
+  #handleSortChange = (sortType) => {
+    this.#copyBoardPoints = sortPoints(this.#copyBoardPoints, sortType);
+    this.#clearPoints();
+    this.#renderPoints();
   };
 
   #resetPoints = () => {
@@ -64,8 +73,26 @@ export default class BoardPresenter {
     this.#pointsPresenters.set(point.id, pointPresenter);
   }
 
-  // #clearPoints() {
-  //   this.#pointsPresenters.forEach((pesenter) => pesenter.destroy());
-  //   this.#pointsPresenters.clear();
-  // }
+  #renderPoints() {
+    this.#copyBoardPoints.forEach((point) => this.#renderPoint({ point }));
+  }
+
+  #renderSorts() {
+    render(new TripSortsView({
+      onSortChange: this.#handleSortChange
+    }), this.#boardComponent.element);
+  }
+
+  #renderEmptyList() {
+    render(new TripListEmptyView, this.#boardComponent.element);
+  }
+
+  #renderList() {
+    render(this.#tripListComponent, this.#boardComponent.element);
+  }
+
+  #clearPoints() {
+    this.#pointsPresenters.forEach((pesenter) => pesenter.destroy());
+    this.#pointsPresenters.clear();
+  }
 }

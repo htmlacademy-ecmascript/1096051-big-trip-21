@@ -104,4 +104,12 @@ const Mod = {
   EDIT: 'edit'
 };
 
-export {POINT_TYPES, OFFERS, DESTNATIONS, Mod };
+const SORTS = {
+  DAY: 'Day',
+  EVENT: 'Event',
+  TIME: 'Time',
+  PRICE: 'Price',
+  OFFERS: 'Offers'
+};
+
+export {POINT_TYPES, OFFERS, DESTNATIONS, Mod, SORTS };
