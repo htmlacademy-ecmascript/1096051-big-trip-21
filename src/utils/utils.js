@@ -43,4 +43,8 @@ function updateItem(points, update) {
   return points.map((point) => point.id === update.id ? update : point);
 }
 
-export { getRandomArrayElement, getRandomPositiveInteger, generateRandomText, getRandomBoolean, updateItem};
+function getLocaleCompare(a, b) {
+  return a.localeCompare(b);
+}
+
+export { getRandomArrayElement, getRandomPositiveInteger, generateRandomText, getRandomBoolean, updateItem, getLocaleCompare };

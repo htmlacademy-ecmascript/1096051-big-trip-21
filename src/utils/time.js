@@ -41,12 +41,12 @@ function getDurationFormatTime (minutes, hours, days) {
   return text;
 }
 
-function getDiffTime(startTime, endTime) {
+function getTimeDiff(startTime, endTime) {
   return endTime - startTime;
 }
 
 function getDurationText(startTime, endTime) {
-  const seconds = getDiffTime(startTime, endTime) / 1000;
+  const seconds = getTimeDiff(startTime, endTime) / 1000;
   let minutes = seconds / 60;
   let hours;
   let days;
@@ -81,4 +81,4 @@ function getRandomDate() {
   );
 }
 
-export {getHumanizeEventTime, getDurationText, getRandomDate, getDiffTime};
+export {getHumanizeEventTime, getDurationText, getRandomDate, getTimeDiff};

@@ -1,6 +1,15 @@
 import { SORTS } from '../const.js';
 import { getTypeOffers } from '../mock/offers.js';
-import { getDiffTime } from './time.js';
+import { getTimeDiff } from './time.js';
+import { getLocaleCompare } from './utils.js';
+
+const sorter = {
+  [SORTS.EVENT.toLowerCase()]: sortByEvent,
+  [SORTS.TIME.toLowerCase()]: sortByTime,
+  [SORTS.PRICE.toLowerCase()]: sortByPrice,
+  [SORTS.OFFERS.toLowerCase()]: sortByOffers,
+  [SORTS.DAY.toLowerCase()]: sortByDay
+};
 
 function sortByDay(a, b) {
   const firstDate = a.startTime;
@@ -10,15 +19,15 @@ function sortByDay(a, b) {
 }
 
 function sortByEvent(a, b) {
-  const firstDestinationNameLength = a.destination.name.length;
-  const secondDestinationNameLength = b.destination.name.length;
+  const firstDestinationName = String(a.destination.name);
+  const secondDestinationName = String(b.destination.name);
 
-  return firstDestinationNameLength - secondDestinationNameLength;
+  return getLocaleCompare(firstDestinationName, secondDestinationName);
 }
 
 function sortByTime(a, b) {
-  const firstDuration = getDiffTime(a.startTime, a.endTime);
-  const secondDuration = getDiffTime(b.startTime, b.endTime);
+  const firstDuration = getTimeDiff(a.startTime, a.endTime);
+  const secondDuration = getTimeDiff(b.startTime, b.endTime);
 
   return secondDuration - firstDuration;
 }
@@ -38,26 +47,7 @@ function sortByOffers(a, b) {
 }
 
 function sortPoints(points, sortType = 'day') {
-  let sortedPoints = points;
-  switch(sortType) {
-    case SORTS.EVENT.toLowerCase():
-      sortedPoints = points.sort(sortByEvent);
-      break;
-    case SORTS.TIME.toLowerCase():
-      sortedPoints = points.sort(sortByTime);
-      break;
-    case SORTS.PRICE.toLowerCase():
-      sortedPoints = points.sort(sortByPrice);
-      break;
-    case SORTS.OFFERS.toLowerCase():
-      sortedPoints = points.sort(sortByOffers);
-      break;
-    default:
-      sortedPoints = points.sort(sortByDay);
-      break;
-  }
-
-  return sortedPoints;
+  return points.sort(sorter[sortType]);
 }
 
 export { sortPoints };
