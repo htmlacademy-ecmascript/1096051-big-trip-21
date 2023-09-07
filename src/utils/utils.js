@@ -47,4 +47,8 @@ function getLocaleCompare(a, b) {
   return a.localeCompare(b);
 }
 
-export { getRandomArrayElement, getRandomPositiveInteger, generateRandomText, getRandomBoolean, updateItem, getLocaleCompare };
+function capitalizeWord(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+export { getRandomArrayElement, getRandomPositiveInteger, generateRandomText, getRandomBoolean, updateItem, getLocaleCompare, capitalizeWord };

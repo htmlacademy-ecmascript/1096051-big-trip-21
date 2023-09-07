@@ -32,7 +32,7 @@ export default class BoardPresenter {
   init() {
     this.#boardPoints = [...this.#pointsModel.points];
     this.#copyBoardPoints = sortPoints([...this.#boardPoints]);
-    this.#destinationsNames = [this.#destinationsModel.names];
+    this.#destinationsNames = [...this.#destinationsModel.names];
     this.#render();
   }
 
@@ -59,6 +59,15 @@ export default class BoardPresenter {
     this.#renderPoints();
   };
 
+  #destinationChange = (point, name) => {
+    if (this.#destinationsModel.destinations.has(name)) {
+      const updateDestination = this.#destinationsModel.destinations.get(name);
+      const updatePoint = {...point, destination: updateDestination};
+
+      this.#handlePointDataChange(updatePoint);
+    }
+  };
+
   #resetPoints = () => {
     this.#pointsPresenters.forEach((presenter) => presenter.setDefaultStatus());
   };
@@ -67,6 +76,7 @@ export default class BoardPresenter {
     const pointPresenter = new PointPresenter({
       tripListComponent: this.#tripListComponent,
       onDataChange: this.#handlePointDataChange,
+      onDestinationChange: this.#destinationChange,
       resetPoints: this.#resetPoints
     });
     pointPresenter.init(point, this.#destinationsModel.names);
