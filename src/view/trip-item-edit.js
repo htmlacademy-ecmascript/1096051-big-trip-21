@@ -159,7 +159,7 @@ export default class TripItemEditView extends AbstractStatefulView{
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#typeChangeHandler);
 
-    this.element.querySelector('.event__input--destination')
+    this.element.querySelector('#event-destination-1')
       .addEventListener('input', this.#destinationChangeHandler);
   }
 
@@ -192,11 +192,11 @@ export default class TripItemEditView extends AbstractStatefulView{
     return createTripItemEditTemplate(this._state, this.#destinationsNames);
   }
 
-  static parseStateToPoint(state) {
+  static parseStateToPoint(state) {// todo убрать метод, если расширение не потребует.
     return {...state};
   }
 
-  static parsePointToStatic(point) {
+  static parsePointToStatic(point) {// todo убрать метод, если расширение не потребует.
     return {...point};
   }
 }

@@ -5,14 +5,20 @@ export default class DestinationsModel {
   #destinations = new Map();
 
   get destinations() {
-    for (let i = 0; i < DESTNATIONS.length; i++) {
-      const randomDestination = createRandomDestination(DESTNATIONS[i]);
-      this.#destinations.set(randomDestination.name, randomDestination);
+    if (!this.#destinations.size) {
+      this.#setDestinations();
     }
     return this.#destinations;
   }
 
   get names() {
     return DESTNATIONS;
+  }
+
+  #setDestinations() {
+    for (let i = 0; i < DESTNATIONS.length; i++) {
+      const randomDestination = createRandomDestination(DESTNATIONS[i]);
+      this.#destinations.set(randomDestination.name, randomDestination);
+    }
   }
 }
