@@ -2,6 +2,9 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { getTypes } from '../mock/types.js';
 import { getHumanizeEventTime } from '../utils/time.js';
 import { getTypeOffers } from '../mock/offers.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 
 function createDestinationTemplate(destination) {
@@ -117,6 +120,9 @@ function createTripItemEditTemplate(point, names) {
 export default class TripItemEditView extends AbstractView{
   #point = null;
   #destinationsNames = null;
+
+  #startDatepicker = null;
+
   #handleFormSubmit = null;
   #handleButtonClick = null;
 
@@ -132,6 +138,8 @@ export default class TripItemEditView extends AbstractView{
 
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#arrowButtonClickHandler);
+
+    this.#setDatePicker();
   }
 
   #submitFormHandler = (evt) => {
@@ -143,6 +151,15 @@ export default class TripItemEditView extends AbstractView{
     evt.preventDefault();
     this.#handleButtonClick();
   };
+
+  #setDatePicker() {
+    this.#startDatepicker = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+      });
+  }
 
   get template() {
     return createTripItemEditTemplate(this.#point, this.#destinationsNames);
