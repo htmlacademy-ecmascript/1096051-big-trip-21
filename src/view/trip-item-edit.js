@@ -1,14 +1,13 @@
 import { getTypes } from '../mock/types.js';
 import { getHumanizeEventTime } from '../utils/time.js';
 import { getTypeOffers } from '../mock/offers.js';
-<<<<<<< HEAD
+
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
-=======
+
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { capitalizeWord } from '../utils/utils.js';
->>>>>>> 0fb1d2918f3ca23d3b6dc4d5005256a2fd4d80cf
 
 
 function createPhotoTemplate(photoURL) {
@@ -136,11 +135,8 @@ export default class TripItemEditView extends AbstractStatefulView{
   #point = null;
   #destinationsNames = null;
 
-<<<<<<< HEAD
   #startDatepicker = null;
 
-=======
->>>>>>> 0fb1d2918f3ca23d3b6dc4d5005256a2fd4d80cf
   #handleFormSubmit = null;
   #handleButtonClick = null;
   #handleTypeChange = null;
@@ -167,15 +163,14 @@ export default class TripItemEditView extends AbstractStatefulView{
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#arrowButtonClickHandler);
 
-<<<<<<< HEAD
+
     this.#setDatePicker();
-=======
+
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#typeChangeHandler);
 
     this.element.querySelector('#event-destination-1')
       .addEventListener('input', this.#destinationChangeHandler);
->>>>>>> 0fb1d2918f3ca23d3b6dc4d5005256a2fd4d80cf
   }
 
   #submitFormHandler = (evt) => {
@@ -188,16 +183,21 @@ export default class TripItemEditView extends AbstractStatefulView{
     this.#handleButtonClick();
   };
 
-<<<<<<< HEAD
+  #dateChangeHandler = (evt) => {
+    evt.peventDefault();
+  };
+
   #setDatePicker() {
     this.#startDatepicker = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
         dateFormat: 'd/m/y H:i',
         enableTime: true,
-      });
+        onChange: this.#dateChangeHandler
+      }
+    );
   }
-=======
+
   #typeChangeHandler = (evt) => {
     const newType = capitalizeWord(evt.target.value);
 
@@ -212,7 +212,6 @@ export default class TripItemEditView extends AbstractStatefulView{
     evt.preventDefault();
     this.#handleDestinationChange(this.#point, destinationName);
   };
->>>>>>> 0fb1d2918f3ca23d3b6dc4d5005256a2fd4d80cf
 
   get template() {
     return createTripItemEditTemplate(this._state, this.#destinationsNames);
