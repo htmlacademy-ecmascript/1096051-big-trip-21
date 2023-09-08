@@ -1,13 +1,24 @@
 import { createRandomDestination } from '../mock/destinations.js';
-
-const COUNT_DESTINATIONS = 5;
+import { DESTNATIONS } from '../const.js';
 
 export default class DestinationsModel {
+  #destinations = new Map();
+
   get destinations() {
-    return Array.from({length : COUNT_DESTINATIONS}, createRandomDestination);
+    if (!this.#destinations.size) {
+      this.#setDestinations();
+    }
+    return this.#destinations;
   }
 
   get names() {
-    return this.destinations.map((destination) => destination.name);
+    return DESTNATIONS;
+  }
+
+  #setDestinations() {
+    for (let i = 0; i < DESTNATIONS.length; i++) {
+      const randomDestination = createRandomDestination(DESTNATIONS[i]);
+      this.#destinations.set(randomDestination.name, randomDestination);
+    }
   }
 }

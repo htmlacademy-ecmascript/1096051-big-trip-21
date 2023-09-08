@@ -2,6 +2,7 @@ import { getRandomArrayElement, getRandomBoolean, getRandomPositiveInteger} from
 import { POINT_TYPES } from '../const.js';
 import { getRandomDate } from '../utils/time.js';
 import { nanoid } from 'nanoid';
+import { DESTNATIONS } from '../const.js';
 
 const PRICE = {
   MIN: 1,
@@ -31,7 +32,7 @@ function createRandomPoint(destinations) {
   return {
     id: nanoid(),
     type: getRandomArrayElement(Object.values(POINT_TYPES)),
-    destination: getRandomArrayElement(destinations),
+    destination: destinations.get(getRandomArrayElement(DESTNATIONS)),
     startTime,
     endTime,
     isFavorite: getRandomBoolean(),

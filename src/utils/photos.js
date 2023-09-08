@@ -1,11 +1,12 @@
+import { nanoid } from 'nanoid';
 import { getRandomPositiveInteger } from './utils.js';
 
 function createRandomPhotoUrl() {
-  return `https://loremflickr.com/248/152?random=${crypto.randomUUID()}`;
+  return `https://loremflickr.com/248/152?random=${nanoid()}`;
 }
 
 function getRandomPhotos (count) {
-  Array.from({length: getRandomPositiveInteger(0, count)}, createRandomPhotoUrl);
+  return Array.from({length: getRandomPositiveInteger(0, count)}, createRandomPhotoUrl);
 }
 
 export { getRandomPhotos };

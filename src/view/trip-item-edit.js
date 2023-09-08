@@ -1,8 +1,13 @@
-import AbstractView from '../framework/view/abstract-view.js';
 import { getTypes } from '../mock/types.js';
 import { getHumanizeEventTime } from '../utils/time.js';
 import { getTypeOffers } from '../mock/offers.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import { capitalizeWord } from '../utils/utils.js';
 
+
+function createPhotoTemplate(photoURL) {
+  return `<img class="event__photo" src="${photoURL}" alt="Event photo"></img>`;
+}
 
 function createDestinationTemplate(destination) {
   return `<option value="${destination}"></option>`;
@@ -38,11 +43,12 @@ function createTripItemEditTemplate(point, names) {
     endTime,
     price
   } = point;
-  const {name, description} = destination;
+  const {name, description, photos} = destination;
   const offers = getTypeOffers(type);
   const offersElements = offers.map(createOfferTemplate).join('');
   const typesElements = Object.values(getTypes()).map(createTypeItemTemplate).join('');
   const destionationsElements = names.map(createDestinationTemplate).join('');
+  const photosElements = photos.map(createPhotoTemplate).join('');
 
   return `
     <li class="trip-events__item">
@@ -107,6 +113,12 @@ function createTripItemEditTemplate(point, names) {
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
             <p class="event__destination-description">${description}</p>
+
+            <div class="event__photos-container">
+              <div class="event__photos-tape">
+                ${photosElements}
+              </div>
+            </div>
           </section>
         </section>
       </form>
@@ -114,24 +126,41 @@ function createTripItemEditTemplate(point, names) {
   `;
 }
 
-export default class TripItemEditView extends AbstractView{
+export default class TripItemEditView extends AbstractStatefulView{
   #point = null;
   #destinationsNames = null;
+
   #handleFormSubmit = null;
   #handleButtonClick = null;
+  #handleTypeChange = null;
+  #handleDestinationChange = null;
 
-  constructor({point, destinationsNames, onFormSubmit, onArrowClick}) {
+  constructor({ point, destinationsNames, onFormSubmit, onArrowClick, onTypeChange, onDestinationChange }) {
     super();
     this.#point = point;
     this.#destinationsNames = destinationsNames;
+
     this.#handleFormSubmit = onFormSubmit;
     this.#handleButtonClick = onArrowClick;
+    this.#handleTypeChange = onTypeChange;
+    this.#handleDestinationChange = onDestinationChange;
 
+    this._setState(TripItemEditView.parsePointToStatic(this.#point));
+    this._restoreHandlers();
+  }
+
+  _restoreHandlers() {
     this.element.querySelector('form')
       .addEventListener('submit', this.#submitFormHandler);
 
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#arrowButtonClickHandler);
+
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change', this.#typeChangeHandler);
+
+    this.element.querySelector('#event-destination-1')
+      .addEventListener('input', this.#destinationChangeHandler);
   }
 
   #submitFormHandler = (evt) => {
@@ -144,7 +173,30 @@ export default class TripItemEditView extends AbstractView{
     this.#handleButtonClick();
   };
 
+  #typeChangeHandler = (evt) => {
+    const newType = capitalizeWord(evt.target.value);
+
+    evt.preventDefault();
+    this.updateElement({...this.#point, type: newType});
+    this.#handleTypeChange(TripItemEditView.parseStateToPoint(this._state));
+  };
+
+  #destinationChangeHandler = (evt) => {
+    const destinationName = evt.target.value;
+
+    evt.preventDefault();
+    this.#handleDestinationChange(this.#point, destinationName);
+  };
+
   get template() {
-    return createTripItemEditTemplate(this.#point, this.#destinationsNames);
+    return createTripItemEditTemplate(this._state, this.#destinationsNames);
+  }
+
+  static parseStateToPoint(state) {// todo убрать метод, если расширение не потребует.
+    return {...state};
+  }
+
+  static parsePointToStatic(point) {// todo убрать метод, если расширение не потребует.
+    return {...point};
   }
 }
