@@ -43,6 +43,7 @@ export default class PointPresenter {
       onFormSubmit: this.#closeForm,
       onArrowClick: this.#closeForm,
       onTypeChange: this.#handleDataChange,
+      onDateChange: this.#handleDataChange,
       onDestinationChange: this.#handleDestinationChange
     });
 

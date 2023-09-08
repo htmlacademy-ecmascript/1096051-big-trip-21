@@ -1,5 +1,5 @@
 import { getTypes } from '../mock/types.js';
-import { getHumanizeEventTime } from '../utils/time.js';
+import { getHumanizeEventTime, getLimitTime, getDefaultFlatpickrOptions } from '../utils/time.js';
 import { getTypeOffers } from '../mock/offers.js';
 
 import flatpickr from 'flatpickr';
@@ -141,8 +141,9 @@ export default class TripItemEditView extends AbstractStatefulView{
   #handleButtonClick = null;
   #handleTypeChange = null;
   #handleDestinationChange = null;
+  #handleDateChange = null;
 
-  constructor({ point, destinationsNames, onFormSubmit, onArrowClick, onTypeChange, onDestinationChange }) {
+  constructor({ point, destinationsNames, onFormSubmit, onArrowClick, onTypeChange, onDestinationChange, onDateChange }) {
     super();
     this.#point = point;
     this.#destinationsNames = destinationsNames;
@@ -151,6 +152,7 @@ export default class TripItemEditView extends AbstractStatefulView{
     this.#handleButtonClick = onArrowClick;
     this.#handleTypeChange = onTypeChange;
     this.#handleDestinationChange = onDestinationChange;
+    this.#handleDateChange = onDateChange;
 
     this._setState(TripItemEditView.parsePointToStatic(this.#point));
     this._restoreHandlers();
@@ -159,18 +161,15 @@ export default class TripItemEditView extends AbstractStatefulView{
   _restoreHandlers() {
     this.element.querySelector('form')
       .addEventListener('submit', this.#submitFormHandler);
-
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#arrowButtonClickHandler);
-
-
-    this.#setDatePicker();
-
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#typeChangeHandler);
-
     this.element.querySelector('#event-destination-1')
       .addEventListener('input', this.#destinationChangeHandler);
+
+    this.#setStartDatePicker();
+    this.#setEndDatePicker();
   }
 
   #submitFormHandler = (evt) => {
@@ -183,17 +182,33 @@ export default class TripItemEditView extends AbstractStatefulView{
     this.#handleButtonClick();
   };
 
-  #dateChangeHandler = (evt) => {
-    evt.peventDefault();
-  };
-
-  #setDatePicker() {
+  #setStartDatePicker() {
     this.#startDatepicker = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
-        dateFormat: 'd/m/y H:i',
-        enableTime: true,
-        onChange: this.#dateChangeHandler
+        ...getDefaultFlatpickrOptions(),
+        maxTime: getLimitTime(this.#point.endTime),
+        onChange: (evt) => this.#dateChangeHandler(evt, true),
+        enable: [
+          {
+            from: new Date(),
+            to: this.#point.endTime
+          }
+        ]
+      }
+    );
+  }
+
+  #setEndDatePicker() {
+    this.#startDatepicker = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        ...getDefaultFlatpickrOptions(),
+        minTime: getLimitTime(this.#point.startTime),
+        onChange: (evt) => this.#dateChangeHandler(evt, false),
+        disable: [
+          (date) => date < this.#point.startTime
+        ]
       }
     );
   }
@@ -204,6 +219,16 @@ export default class TripItemEditView extends AbstractStatefulView{
     evt.preventDefault();
     this.updateElement({...this.#point, type: newType});
     this.#handleTypeChange(TripItemEditView.parseStateToPoint(this._state));
+  };
+
+  #dateChangeHandler = (evt, isStartTime) => {
+    if (isStartTime) {
+      this.updateElement({...this.#point, startTime: new Date(evt)});
+    } else {
+      this.updateElement({...this.#point, endTime: new Date(evt)});
+    }
+
+    this.#handleDateChange(TripItemEditView.parseStateToPoint(this._state));
   };
 
   #destinationChangeHandler = (evt) => {
