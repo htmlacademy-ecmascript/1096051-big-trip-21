@@ -5,7 +5,7 @@ const FORMAT_EVENT = {
   DATE: 'DD MMM',
   TIME: 'hh:mm',
   ATRIBUTE: 'YYYY-MM-DDTHH:mm',
-  FORM: 'YY/MM/DD HH:mm',
+  FORM: 'DD/MM/YY HH:mm',
   TRIP_DATE: 'MMM DD'
 };
 
@@ -81,4 +81,17 @@ function getRandomDate() {
   );
 }
 
-export {getHumanizeEventTime, getDurationText, getRandomDate, getTimeDiff};
+function getLimitTime(time) {
+  return `${time.getHours()}:${time.getMinutes()}`;
+}
+
+function getDefaultFlatpickrOptions() {
+  return {
+    dateFormat: 'd/m/y H:i',
+    enableTime: true,
+    // eslint-disable-next-line camelcase
+    time_24hr: true
+  };
+}
+
+export { getHumanizeEventTime, getDurationText, getRandomDate, getTimeDiff, getLimitTime, getDefaultFlatpickrOptions };
