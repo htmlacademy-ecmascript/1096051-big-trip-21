@@ -222,11 +222,7 @@ export default class TripItemEditView extends AbstractStatefulView{
   };
 
   #dateChangeHandler = (evt, isStartTime) => {
-    if (isStartTime) {
-      this.updateElement({...this.#point, startTime: new Date(evt)});
-    } else {
-      this.updateElement({...this.#point, endTime: new Date(evt)});
-    }
+    this.updateElement({...this.#point, [isStartTime ? 'startTime' : 'endTime']: new Date(evt)});
 
     this.#handleDateChange(TripItemEditView.parseStateToPoint(this._state));
   };
