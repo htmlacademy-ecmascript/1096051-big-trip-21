@@ -4,7 +4,7 @@ import { capitalizeWord } from '../utils/utils.js';
 import { getTypeOffers } from '../mock/offers.js';
 
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import DatepickerAbstarct from './datepicker-view.js';
+import DatepickerAbstarct from './datepicker-abstract.js';
 import { DATE_TYPE } from '../const.js';
 
 
