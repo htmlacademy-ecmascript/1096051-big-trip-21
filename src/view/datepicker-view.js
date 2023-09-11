@@ -52,14 +52,6 @@ export default class DatepickerAbstarct {
     this.#handleDateChange(evt, isStartTime);
   }
 
-  updateStartTime(time) {
-    this.#startTime = time;
-  }
-
-  updateEndTime(time) {
-    this.#endTime = time;
-  }
-
   removeElement() {
     if(this.#datepicker) {
       this.#datepicker.destroy();
