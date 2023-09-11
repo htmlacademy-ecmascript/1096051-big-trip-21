@@ -3,7 +3,7 @@ import { DATE_TYPE } from '../const.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-export default class DatepickerAbstarct {
+export default class DatepickerAbstract {
   #datepicker = null;
 
   #startTime = null;

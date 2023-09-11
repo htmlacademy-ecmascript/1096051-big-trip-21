@@ -29,14 +29,17 @@ function getFormattedTime(time) {
 function getDurationFormatTime (minutes, hours, days) {
   let text = '';
   if (days) {
-    text += `${getFormattedTime(days)}D `;
+    text += `${getFormattedTime(Math.floor(days))}D `;
   }
 
   if (hours) {
-    text += `${getFormattedTime(hours)}H `;
+    text += `${getFormattedTime(Math.floor(hours))}H `;
   }
 
-  text += `${getFormattedTime(minutes)}M`;
+  if (minutes) {
+    text += `${getFormattedTime(Math.floor(minutes))}M`;
+  }
+
 
   return text;
 }

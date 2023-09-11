@@ -4,7 +4,7 @@ import { capitalizeWord } from '../utils/utils.js';
 import { getTypeOffers } from '../mock/offers.js';
 
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import DatepickerAbstarct from './datepicker-abstract.js';
+import DatepickerAbstract from './datepicker-abstract.js';
 import { DATE_TYPE } from '../const.js';
 
 
@@ -152,7 +152,7 @@ export default class TripItemEditView extends AbstractStatefulView{
     this.#handleDestinationChange = onDestinationChange;
     this.#handleDateChange = onDateChange;
 
-    this.#datepicker = new DatepickerAbstarct({ point, onDateChange: this.#updateDate });
+    this.#datepicker = new DatepickerAbstract({ point, onDateChange: this.#updateDate });
 
     this._setState(TripItemEditView.parsePointToStatic(this.#point));
     this._restoreHandlers();
