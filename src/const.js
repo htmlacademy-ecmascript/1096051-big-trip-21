@@ -112,4 +112,9 @@ const SORTS = {
   OFFERS: 'Offers'
 };
 
-export {POINT_TYPES, OFFERS, DESTNATIONS, Mod, SORTS };
+const DATE_TYPE = {
+  START: 'START',
+  END: 'END'
+};
+
+export {POINT_TYPES, OFFERS, DESTNATIONS, Mod, SORTS, DATE_TYPE };

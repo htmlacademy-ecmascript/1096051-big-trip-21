@@ -1,13 +1,11 @@
 import { getTypes } from '../mock/types.js';
-import { getHumanizeEventTime, getLimitTime, getDefaultFlatpickrOptions } from '../utils/time.js';
+import { getHumanizeEventTime } from '../utils/time.js';
+import { capitalizeWord } from '../utils/utils.js';
 import { getTypeOffers } from '../mock/offers.js';
 
-import flatpickr from 'flatpickr';
-
-import 'flatpickr/dist/flatpickr.min.css';
-
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { capitalizeWord } from '../utils/utils.js';
+import DatepickerAbstarct from './datepicker-view.js';
+import { DATE_TYPE } from '../const.js';
 
 
 function createPhotoTemplate(photoURL) {
@@ -135,13 +133,13 @@ export default class TripItemEditView extends AbstractStatefulView{
   #point = null;
   #destinationsNames = null;
 
-  #startDatepicker = null;
-
   #handleFormSubmit = null;
   #handleButtonClick = null;
   #handleTypeChange = null;
   #handleDestinationChange = null;
   #handleDateChange = null;
+
+  #datepicker = null;
 
   constructor({ point, destinationsNames, onFormSubmit, onArrowClick, onTypeChange, onDestinationChange, onDateChange }) {
     super();
@@ -153,6 +151,8 @@ export default class TripItemEditView extends AbstractStatefulView{
     this.#handleTypeChange = onTypeChange;
     this.#handleDestinationChange = onDestinationChange;
     this.#handleDateChange = onDateChange;
+
+    this.#datepicker = new DatepickerAbstarct({ point, onDateChange: this.#updateDate });
 
     this._setState(TripItemEditView.parsePointToStatic(this.#point));
     this._restoreHandlers();
@@ -168,8 +168,8 @@ export default class TripItemEditView extends AbstractStatefulView{
     this.element.querySelector('#event-destination-1')
       .addEventListener('input', this.#destinationChangeHandler);
 
-    this.#setStartDatePicker();
-    this.#setEndDatePicker();
+    this.#datepicker.createCalendar(this.element.querySelector('#event-start-time-1'), DATE_TYPE.START);
+    this.#datepicker.createCalendar(this.element.querySelector('#event-end-time-1'), DATE_TYPE.END);
   }
 
   #submitFormHandler = (evt) => {
@@ -182,35 +182,10 @@ export default class TripItemEditView extends AbstractStatefulView{
     this.#handleButtonClick();
   };
 
-  #setStartDatePicker() {
-    this.#startDatepicker = flatpickr(
-      this.element.querySelector('#event-start-time-1'),
-      {
-        ...getDefaultFlatpickrOptions(),
-        maxTime: getLimitTime(this.#point.endTime),
-        onChange: (evt) => this.#dateChangeHandler(evt, true),
-        enable: [
-          {
-            from: new Date(),
-            to: this.#point.endTime
-          }
-        ]
-      }
-    );
-  }
+  removeElement() {
+    super.removeElement();
 
-  #setEndDatePicker() {
-    this.#startDatepicker = flatpickr(
-      this.element.querySelector('#event-end-time-1'),
-      {
-        ...getDefaultFlatpickrOptions(),
-        minTime: getLimitTime(this.#point.startTime),
-        onChange: (evt) => this.#dateChangeHandler(evt, false),
-        disable: [
-          (date) => date < this.#point.startTime
-        ]
-      }
-    );
+    this.#datepicker.removeElement();
   }
 
   #typeChangeHandler = (evt) => {
@@ -221,7 +196,7 @@ export default class TripItemEditView extends AbstractStatefulView{
     this.#handleTypeChange(TripItemEditView.parseStateToPoint(this._state));
   };
 
-  #dateChangeHandler = (evt, isStartTime) => {
+  #updateDate = (evt, isStartTime) => {
     this.updateElement({...this.#point, [isStartTime ? 'startTime' : 'endTime']: new Date(evt)});
 
     this.#handleDateChange(TripItemEditView.parseStateToPoint(this._state));
