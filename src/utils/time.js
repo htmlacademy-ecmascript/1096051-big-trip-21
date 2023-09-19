@@ -18,6 +18,15 @@ const TIME = {
   MAX_SECONDS: 60,
 };
 
+const HOURS_INCREMENT = {
+  MIN: 1,
+  MAX: 10
+};
+const MINUTES_INCREMENT = {
+  MIN: 1,
+  MAX: 60
+};
+
 function getHumanizeEventTime(date, type) {
   return dayjs(date).format(FORMAT_EVENT[type]);
 }
@@ -97,4 +106,12 @@ function getDefaultFlatpickrOptions() {
   };
 }
 
-export { getHumanizeEventTime, getDurationText, getRandomDate, getTimeDiff, getLimitTime, getDefaultFlatpickrOptions };
+function setEndTime(startTime) {
+  const endTime = new Date(startTime);
+  endTime.setHours(startTime.getHours() + getRandomPositiveInteger(HOURS_INCREMENT.MIN, HOURS_INCREMENT.MAX));
+  endTime.setMinutes(startTime.getMinutes() + getRandomPositiveInteger(MINUTES_INCREMENT.MIN, MINUTES_INCREMENT.MAX));
+
+  return endTime;
+}
+
+export { getHumanizeEventTime, getDurationText, getRandomDate, getTimeDiff, getLimitTime, getDefaultFlatpickrOptions, setEndTime };

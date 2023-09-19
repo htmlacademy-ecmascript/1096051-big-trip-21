@@ -105,7 +105,7 @@ function createNewPointTemplate({types, pointOffers, destinations}) {
   `;
 }
 
-export default class NewPoint extends AbstractView {
+export default class NewPointView extends AbstractView {
   #newPointData;
 
   constructor(newPointData) {

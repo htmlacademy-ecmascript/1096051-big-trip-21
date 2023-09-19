@@ -1,7 +1,7 @@
 import TripItemView from '../view/trip-item.js';
 import TripItemEditView from '../view/trip-item-edit.js';
 import { replace, render, remove } from '../framework/render.js';
-import { Mod } from '../const.js';
+import { Mod, UpdateType, UserAction } from '../const.js';
 
 export default class PointPresenter {
   #point = null;
@@ -13,14 +13,14 @@ export default class PointPresenter {
   #resetPoints = null;
 
   #handleDataChange = null;
-  #handleDestinationChange = null;
+  #getDestinationDataByName = null;
 
   #mod = Mod.DEFAULT;
 
-  constructor({ tripListComponent, onDataChange, onDestinationChange, resetPoints }) {
+  constructor({ tripListComponent, onDataChange, getDestinationDataByName, resetPoints }) {
     this.#tripListComponent = tripListComponent;
+    this.#getDestinationDataByName = getDestinationDataByName;
     this.#handleDataChange = onDataChange;
-    this.#handleDestinationChange = onDestinationChange;
     this.#resetPoints = resetPoints;
   }
 
@@ -40,11 +40,10 @@ export default class PointPresenter {
     this.#pointEditComponent = new TripItemEditView({
       point: this.#point,
       destinationsNames: this.#destinationsNames,
-      onFormSubmit: this.#closeForm,
+      getDestinationDataByName: this.#getDestinationDataByName,
+      onFormSubmit: this.#handleFormSubmit,
       onArrowClick: this.#closeForm,
-      onTypeChange: this.#handleDataChange,
-      onDateChange: this.#handleDataChange,
-      onDestinationChange: this.#handleDestinationChange
+      onDeleteClick: this.#handleDeleteClick
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -70,7 +69,37 @@ export default class PointPresenter {
   }
 
   #handleFavoriteChange = () => {
-    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite}
+    );
+  };
+
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point
+    );
+
+    this.#closeForm();
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point
+    );
+  };
+
+  #escKeydownHandler = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this.#replaceFormToCard();
+      window.removeEventListener('keydown', this.#escKeydownHandler);
+    }
   };
 
   #closeForm = () => {
@@ -82,14 +111,6 @@ export default class PointPresenter {
     this.#resetPoints();
     this.#replaceCardToForm();
     window.addEventListener('keydown', this.#escKeydownHandler);
-  };
-
-  #escKeydownHandler = (evt) => {
-    if (evt.key === 'Escape') {
-      evt.preventDefault();
-      this.#replaceFormToCard();
-      window.removeEventListener('keydown', this.#escKeydownHandler);
-    }
   };
 
   #replaceCardToForm() {

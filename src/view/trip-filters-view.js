@@ -1,24 +1,17 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const FILTERS = {
-  ALL: 'All',
-  FUTURE: 'Future',
-  PRESENT: 'Present',
-  PAST: 'Past',
-};
-
-function createFilterTemplate(filter) {
-  const filterLower = filter.toLowerCase();
+function createFilterTemplate(filter, currentFilterType) {
+  const {type, count} = filter;
   return `
     <div class="trip-filters__item">
-      <input id="filter-${filterLower}" class="trip-filters__item-input  visually-hidden" type="radio" name="trip-filter" value="${filterLower}" checked>
-      <label class="trip-filters__label" for="filter-${filterLower}">${filterLower}</label>
+      <input id="filter-${type}" class="trip-filters__item-input  visually-hidden" type="radio" name="trip-filter" value="${type}" ${type === currentFilterType ? 'cheked' : ''} ${count === 0 ? 'disabled' : ''}>
+      <label class="trip-filters__label" for="filter-${type}">${type}</label>
     </div>
   `;
 }
 
-function createTripFiltersTemplate() {
-  const filtersElements = Object.values(FILTERS).map(createFilterTemplate).join('');
+function createTripFiltersTemplate(filterItems, currentFilterType) {
+  const filtersElements = Object.values(filterItems).map((filter) => createFilterTemplate(filter, currentFilterType)).join('');
 
   return `
     <form class="trip-filters" action="#" method="get">
@@ -29,7 +22,26 @@ function createTripFiltersTemplate() {
 }
 
 export default class TripFiltersView extends AbstractView{
-  get template() {
-    return createTripFiltersTemplate();
+  #filters = null;
+  #currentFilterType = null;
+  #handleFilterChange = null;
+
+  constructor({ filters, currentFilterType, onFilterTypeChange}) {
+    super();
+
+    this.#filters = filters;
+    this.#currentFilterType = currentFilterType;
+    this.#handleFilterChange = onFilterTypeChange;
+
+    this.element.addEventListener('change', this.#filterTypeChangeHandler);
   }
+
+  get template() {
+    return createTripFiltersTemplate(this.#filters, this.#currentFilterType);
+  }
+
+  #filterTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFilterChange(evt.target.value);
+  };
 }
