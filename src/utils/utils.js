@@ -47,4 +47,8 @@ function capitalizeWord(word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
-export { getRandomArrayElement, getRandomPositiveInteger, generateRandomText, getRandomBoolean, getLocaleCompare, capitalizeWord };
+function setChecked(checkedElement, element) {
+  return element.toLowerCase() === checkedElement ? 'checked' : '';
+}
+
+export { getRandomArrayElement, getRandomPositiveInteger, generateRandomText, getRandomBoolean, getLocaleCompare, capitalizeWord, setChecked };

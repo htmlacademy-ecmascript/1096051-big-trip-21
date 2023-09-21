@@ -1,41 +1,48 @@
-import { getDefaultFlatpickrOptions, getLimitTime } from '../utils/time.js';
+import { getLimitTime } from '../utils/time.js';
 import { DATE_TYPE } from '../const.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 export default class DatepickerAbstract {
   #datepicker = null;
-
-  #startTime = null;
-  #endTime = null;
+  #options = null;
 
   #handleDateChange = null;
 
-  constructor({ point, onDateChange }) {
+
+  constructor({ onDateChange }) {
     this.#handleDateChange = onDateChange;
-    this.#startTime = point.startTime;
-    this.#endTime = point.endTime;
+
+    this.#options = {
+      dateFormat: 'd/m/y H:i',
+      enableTime: true,
+      'time_24hr': true
+    };
   }
 
-  createCalendar(element, typeDate) {
-    let options = {
-      ...getDefaultFlatpickrOptions(),
-      minTime: getLimitTime(this.#startTime),
-      onClose: (evt) => this.#dateChangeHandler(evt, false),
-      disable: [
-        (date) => date < this.#startTime
-      ]
-    };
+  createCalendar(point, element, typeDate) {
+    const {startTime, endTime} = point;
+
+    if (typeDate === DATE_TYPE.END) {
+      this.#options = {
+        ...this.#options,
+        minTime: getLimitTime(startTime),
+        onClose: (evt) => this.#dateChangeHandler(evt, false),
+        disable: [
+          (date) => date < startTime
+        ]
+      };
+    }
 
     if (typeDate === DATE_TYPE.START) {
-      options = {
-        ...getDefaultFlatpickrOptions(),
-        maxTime: getLimitTime(this.#endTime),
+      this.#options = {
+        ...this.#options,
+        maxTime: getLimitTime(endTime),
         onClose: (evt) => this.#dateChangeHandler(evt, true),
         enable: [
           {
             from: new Date(),
-            to: this.#endTime
+            to: endTime
           }
         ]
       };
@@ -44,7 +51,7 @@ export default class DatepickerAbstract {
 
     this.#datepicker = flatpickr(
       element,
-      options
+      this.#options
     );
   }
 

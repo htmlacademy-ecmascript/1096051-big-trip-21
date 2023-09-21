@@ -1,9 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { SORTS } from '../const.js';
-
-function setChecked(currentSortType, sort) {
-  return sort.toLowerCase() === currentSortType ? 'checked' : '';
-}
+import { setChecked } from '../utils/utils.js';
 
 function createSortTemplate(currentSortType, sort) {
   const sortLower = sort.toLowerCase();

@@ -15,13 +15,7 @@ export default class DestinationsModel {
     return DESTNATIONS;
   }
 
-  getDestinationDataByName = (destinationName) => {
-    if (this.destinations.has(destinationName)) {
-      return this.destinations.get(destinationName);
-    }
-
-    return null;
-  };
+  getDestinationDataByName = (destinationName) => this.destinations.get(destinationName) || null;
 
   #setDestinations() {
     for (let i = 0; i < DESTNATIONS.length; i++) {

@@ -20,7 +20,7 @@ const TIME = {
 
 const HOURS_INCREMENT = {
   MIN: 1,
-  MAX: 10
+  MAX: 24
 };
 const MINUTES_INCREMENT = {
   MIN: 1,
@@ -97,15 +97,6 @@ function getLimitTime(time) {
   return `${time.getHours()}:${time.getMinutes()}`;
 }
 
-function getDefaultFlatpickrOptions() {
-  return {
-    dateFormat: 'd/m/y H:i',
-    enableTime: true,
-    // eslint-disable-next-line camelcase
-    time_24hr: true
-  };
-}
-
 function setEndTime(startTime) {
   const endTime = new Date(startTime);
   endTime.setHours(startTime.getHours() + getRandomPositiveInteger(HOURS_INCREMENT.MIN, HOURS_INCREMENT.MAX));
@@ -114,4 +105,4 @@ function setEndTime(startTime) {
   return endTime;
 }
 
-export { getHumanizeEventTime, getDurationText, getRandomDate, getTimeDiff, getLimitTime, getDefaultFlatpickrOptions, setEndTime };
+export { getHumanizeEventTime, getDurationText, getRandomDate, getTimeDiff, getLimitTime, setEndTime };

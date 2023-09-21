@@ -160,7 +160,8 @@ export default class TripItemEditView extends AbstractStatefulView{
   #getDestinationDataByName = null;
 
   #isNewPoint = null;
-  #datepicker = null;
+  #startDatepicker = null;
+  #endDatepicker = null;
 
   constructor({ point = BLANK_POINT, destinationsNames, onFormSubmit, onArrowClick, getDestinationDataByName, onDeleteClick, isNewPoint = false }) {
     super();
@@ -177,7 +178,8 @@ export default class TripItemEditView extends AbstractStatefulView{
       this.#point.id = nanoid();
     }
 
-    this.#datepicker = new DatepickerAbstract({ point, onDateChange: this.#dateChangeHandler });
+    this.#startDatepicker = new DatepickerAbstract({ onDateChange: this.#dateChangeHandler });
+    this.#endDatepicker = new DatepickerAbstract({ onDateChange: this.#dateChangeHandler });
 
     this._setState(TripItemEditView.parsePointToStatic(this.#point));
     this._restoreHandlers();
@@ -186,7 +188,8 @@ export default class TripItemEditView extends AbstractStatefulView{
   removeElement() {
     super.removeElement();
 
-    this.#datepicker.removeElement();
+    this.#startDatepicker.removeElement();
+    this.#endDatepicker.removeElement();
   }
 
   _restoreHandlers() {
@@ -205,8 +208,16 @@ export default class TripItemEditView extends AbstractStatefulView{
         .addEventListener('click', this.#arrowButtonClickHandler);
     }
 
-    this.#datepicker.createCalendar(this.element.querySelector('#event-start-time-1'), DATE_TYPE.START);
-    this.#datepicker.createCalendar(this.element.querySelector('#event-end-time-1'), DATE_TYPE.END);
+    this.#startDatepicker.createCalendar(
+      this._state,
+      this.element.querySelector('#event-start-time-1'),
+      DATE_TYPE.START
+    );
+    this.#endDatepicker.createCalendar(
+      this._state,
+      this.element.querySelector('#event-end-time-1'),
+      DATE_TYPE.END
+    );
   }
 
   #submitFormHandler = (evt) => {
@@ -229,7 +240,7 @@ export default class TripItemEditView extends AbstractStatefulView{
   };
 
   #dateChangeHandler = (evt, isStartTime) => {
-    this.updateElement({...this.#point, [isStartTime ? 'startTime' : 'endTime']: new Date(evt)});
+    this.updateElement({...this._state, [isStartTime ? 'startTime' : 'endTime']: new Date(evt)});
   };
 
   #deleteClickHandler = (evt) => {
@@ -251,7 +262,7 @@ export default class TripItemEditView extends AbstractStatefulView{
   #priceChangeHandler = (evt) => {
     evt.preventDefault();
 
-    this._setState({ price: Number(evt.target.value)});
+    this._setState({price: Number(evt.target.value)});
   };
 
   get template() {
