@@ -39,10 +39,6 @@ function getRandomBoolean() {
   return Boolean(Math.round(Math.random()));
 }
 
-function updateItem(points, update) {
-  return points.map((point) => point.id === update.id ? update : point);
-}
-
 function getLocaleCompare(a, b) {
   return a.localeCompare(b);
 }
@@ -51,4 +47,8 @@ function capitalizeWord(word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
-export { getRandomArrayElement, getRandomPositiveInteger, generateRandomText, getRandomBoolean, updateItem, getLocaleCompare, capitalizeWord };
+function setChecked(checkedElement, element) {
+  return element.toLowerCase() === checkedElement ? 'checked' : '';
+}
+
+export { getRandomArrayElement, getRandomPositiveInteger, generateRandomText, getRandomBoolean, getLocaleCompare, capitalizeWord, setChecked };

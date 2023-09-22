@@ -15,6 +15,8 @@ export default class DestinationsModel {
     return DESTNATIONS;
   }
 
+  getDestinationDataByName = (destinationName) => this.destinations.get(destinationName) || null;
+
   #setDestinations() {
     for (let i = 0; i < DESTNATIONS.length; i++) {
       const randomDestination = createRandomDestination(DESTNATIONS[i]);

@@ -112,4 +112,28 @@ const SORTS = {
   OFFERS: 'Offers'
 };
 
-export {POINT_TYPES, OFFERS, DESTNATIONS, Mod, SORTS };
+const DATE_TYPE = {
+  START: 'START',
+  END: 'END'
+};
+
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELTE_POINT'
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR'
+};
+
+const FilterType = {
+  ALL: 'all',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
+};
+
+export {POINT_TYPES, OFFERS, DESTNATIONS, Mod, SORTS, DATE_TYPE, UserAction, UpdateType, FilterType };

@@ -1,8 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { getHumanizeEventTime } from '../utils/time.js';
+import { getDestinationsText, getTotalPrice, getTripDateText } from '../utils/info.js';
 
-function createTripInfoTemplate(price, destinations, date) {
-  const destinationsText = destinations.join(' – ');
+function createTripInfoTemplate(price, destinationsText, date) {
 
   return `
     <section class="trip-main__trip-info  trip-info">
@@ -21,50 +20,17 @@ function createTripInfoTemplate(price, destinations, date) {
 
 export default class TripInfoView extends AbstractView {
   #points = null;
-  constructor({points}) {
+  constructor({ points }) {
     super();
     this.#points = points;
   }
 
-  get template() {
+  get template () {
     return createTripInfoTemplate(
-      this.#getTotalPrice(),
-      this.#getDestinations(),
-      this.#getTripDateText()
+      getTotalPrice(this.#points),
+      getDestinationsText(this.#points),
+      getTripDateText(this.#points)
     );
-  }
-
-  #getTotalPrice() {
-    const initialValue = 0;
-    return this.#points.reduce((total, point) => total + point.price, initialValue);
-  }
-
-  #getDestinations() {
-    return this.#points.map(({destination}) => destination.name);
-  }
-
-  #getStartTripDate() {
-    const minDate = Math.min(...this.#points.map(({startTime}) => startTime));
-    return getHumanizeEventTime(minDate, 'TRIP_DATE');
-  }
-
-  #getEndTripDate() {
-    const maxDate = Math.max(...this.#points.map(({endTime}) => endTime));
-    return getHumanizeEventTime(maxDate, 'TRIP_DATE');
-  }
-
-  #getTripDateText() {
-    const startDate = this.#getStartTripDate().split(' ');
-    const endDate = this.#getEndTripDate().split(' ');
-    const startDateMonth = startDate[0];
-    const endDateMonth = endDate[0];
-    let text = `${this.#getStartTripDate()} – ${this.#getEndTripDate()}`;
-
-    if (startDateMonth === endDateMonth) {
-      text = `${startDate.join(' ')} – ${endDate[1]}`;
-    }
-
-    return text;
   }
 }
 

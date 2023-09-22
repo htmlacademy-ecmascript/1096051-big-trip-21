@@ -1,14 +1,27 @@
 import { getTypes } from '../mock/types.js';
-import { getHumanizeEventTime, getLimitTime, getDefaultFlatpickrOptions } from '../utils/time.js';
+import { getHumanizeEventTime, getRandomDate, setEndTime } from '../utils/time.js';
+import { capitalizeWord } from '../utils/utils.js';
 import { getTypeOffers } from '../mock/offers.js';
-
-import flatpickr from 'flatpickr';
-
-import 'flatpickr/dist/flatpickr.min.css';
+import he from 'he';
 
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { capitalizeWord } from '../utils/utils.js';
+import DatepickerAbstract from './datepicker-abstract.js';
+import { DATE_TYPE } from '../const.js';
+import { nanoid } from 'nanoid';
 
+const START_TIME = getRandomDate();
+const BLANK_POINT = {
+  type: 'Bus',
+  destination: {
+    name: 'Moscow',
+    description: 'description',
+    photos: [`https://loremflickr.com/248/152?random=${nanoid()}`],
+  },
+  startTime: START_TIME,
+  endTime: setEndTime(START_TIME),
+  isFavorite: false,
+  price: 100,
+};
 
 function createPhotoTemplate(photoURL) {
   return `<img class="event__photo" src="${photoURL}" alt="Event photo"></img>`;
@@ -40,7 +53,15 @@ function createOfferTemplate({id, text, price}) {
   `;
 }
 
-function createTripItemEditTemplate(point, names) {
+function createArrowTemplate() {
+  return `
+  <button class="event__rollup-btn" type="button">
+    <span class="visually-hidden">Open event</span>
+  </button>
+  `;
+}
+
+function createTripItemEditTemplate(point, names, isNewPoint) {
   const {
     destination,
     type,
@@ -78,7 +99,7 @@ function createTripItemEditTemplate(point, names) {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(name)}" list="destination-list-1">
             <datalist id="destination-list-1">
               ${destionationsElements}
             </datalist>
@@ -97,14 +118,12 @@ function createTripItemEditTemplate(point, names) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode(String(price))}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
-          <button class="event__rollup-btn" type="button">
-            <span class="visually-hidden">Open event</span>
-          </button>
+          ${isNewPoint ? '' : createArrowTemplate()}
         </header>
         <section class="event__details">
           <section class="event__section  event__section--offers">
@@ -135,107 +154,119 @@ export default class TripItemEditView extends AbstractStatefulView{
   #point = null;
   #destinationsNames = null;
 
-  #startDatepicker = null;
-
   #handleFormSubmit = null;
   #handleButtonClick = null;
-  #handleTypeChange = null;
-  #handleDestinationChange = null;
-  #handleDateChange = null;
+  #handleDeleteClick = null;
+  #getDestinationDataByName = null;
 
-  constructor({ point, destinationsNames, onFormSubmit, onArrowClick, onTypeChange, onDestinationChange, onDateChange }) {
+  #isNewPoint = null;
+  #startDatepicker = null;
+  #endDatepicker = null;
+
+  constructor({ point = BLANK_POINT, destinationsNames, onFormSubmit, onArrowClick, getDestinationDataByName, onDeleteClick, isNewPoint = false }) {
     super();
     this.#point = point;
     this.#destinationsNames = destinationsNames;
+    this.#isNewPoint = isNewPoint;
 
     this.#handleFormSubmit = onFormSubmit;
     this.#handleButtonClick = onArrowClick;
-    this.#handleTypeChange = onTypeChange;
-    this.#handleDestinationChange = onDestinationChange;
-    this.#handleDateChange = onDateChange;
+    this.#handleDeleteClick = onDeleteClick;
+    this.#getDestinationDataByName = getDestinationDataByName;
+
+    if (isNewPoint) {
+      this.#point.id = nanoid();
+    }
+
+    this.#startDatepicker = new DatepickerAbstract({ onDateChange: this.#dateChangeHandler });
+    this.#endDatepicker = new DatepickerAbstract({ onDateChange: this.#dateChangeHandler });
 
     this._setState(TripItemEditView.parsePointToStatic(this.#point));
     this._restoreHandlers();
   }
 
+  removeElement() {
+    super.removeElement();
+
+    this.#startDatepicker.removeElement();
+    this.#endDatepicker.removeElement();
+  }
+
   _restoreHandlers() {
     this.element.querySelector('form')
       .addEventListener('submit', this.#submitFormHandler);
-    this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#arrowButtonClickHandler);
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('#event-destination-1')
       .addEventListener('input', this.#destinationChangeHandler);
+    this.element.querySelector('.event__reset-btn')
+      .addEventListener('click', this.#deleteClickHandler);
+    this.element.querySelector('#event-price-1')
+      .addEventListener('change', this.#priceChangeHandler);
+    if (!this.#isNewPoint) {
+      this.element.querySelector('.event__rollup-btn')
+        .addEventListener('click', this.#arrowButtonClickHandler);
+    }
 
-    this.#setStartDatePicker();
-    this.#setEndDatePicker();
+    this.#startDatepicker.createCalendar(
+      this._state,
+      this.element.querySelector('#event-start-time-1'),
+      DATE_TYPE.START
+    );
+    this.#endDatepicker.createCalendar(
+      this._state,
+      this.element.querySelector('#event-end-time-1'),
+      DATE_TYPE.END
+    );
   }
 
   #submitFormHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(TripItemEditView.parseStateToPoint(this._state));
   };
 
   #arrowButtonClickHandler = (evt) => {
     evt.preventDefault();
+
+    this.updateElement({...this.#point});
     this.#handleButtonClick();
   };
-
-  #setStartDatePicker() {
-    this.#startDatepicker = flatpickr(
-      this.element.querySelector('#event-start-time-1'),
-      {
-        ...getDefaultFlatpickrOptions(),
-        maxTime: getLimitTime(this.#point.endTime),
-        onChange: (evt) => this.#dateChangeHandler(evt, true),
-        enable: [
-          {
-            from: new Date(),
-            to: this.#point.endTime
-          }
-        ]
-      }
-    );
-  }
-
-  #setEndDatePicker() {
-    this.#startDatepicker = flatpickr(
-      this.element.querySelector('#event-end-time-1'),
-      {
-        ...getDefaultFlatpickrOptions(),
-        minTime: getLimitTime(this.#point.startTime),
-        onChange: (evt) => this.#dateChangeHandler(evt, false),
-        disable: [
-          (date) => date < this.#point.startTime
-        ]
-      }
-    );
-  }
 
   #typeChangeHandler = (evt) => {
     const newType = capitalizeWord(evt.target.value);
 
     evt.preventDefault();
     this.updateElement({...this.#point, type: newType});
-    this.#handleTypeChange(TripItemEditView.parseStateToPoint(this._state));
   };
 
   #dateChangeHandler = (evt, isStartTime) => {
-    this.updateElement({...this.#point, [isStartTime ? 'startTime' : 'endTime']: new Date(evt)});
+    this.updateElement({...this._state, [isStartTime ? 'startTime' : 'endTime']: new Date(evt)});
+  };
 
-    this.#handleDateChange(TripItemEditView.parseStateToPoint(this._state));
+  #deleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(TripItemEditView.parseStateToPoint(this._state));
   };
 
   #destinationChangeHandler = (evt) => {
     const destinationName = evt.target.value;
+    const destinationData = this.#getDestinationDataByName(destinationName);
 
     evt.preventDefault();
-    this.#handleDestinationChange(this.#point, destinationName);
+
+    if (destinationData !== null) {
+      this.updateElement({...this.#point, destination: destinationData});
+    }
+  };
+
+  #priceChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    this._setState({price: Number(evt.target.value)});
   };
 
   get template() {
-    return createTripItemEditTemplate(this._state, this.#destinationsNames);
+    return createTripItemEditTemplate(this._state, this.#destinationsNames, this.#isNewPoint);
   }
 
   static parseStateToPoint(state) {// todo убрать метод, если расширение не потребует.

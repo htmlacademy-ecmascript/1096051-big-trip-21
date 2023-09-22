@@ -18,6 +18,15 @@ const TIME = {
   MAX_SECONDS: 60,
 };
 
+const HOURS_INCREMENT = {
+  MIN: 1,
+  MAX: 24
+};
+const MINUTES_INCREMENT = {
+  MIN: 1,
+  MAX: 60
+};
+
 function getHumanizeEventTime(date, type) {
   return dayjs(date).format(FORMAT_EVENT[type]);
 }
@@ -29,14 +38,17 @@ function getFormattedTime(time) {
 function getDurationFormatTime (minutes, hours, days) {
   let text = '';
   if (days) {
-    text += `${getFormattedTime(days)}D `;
+    text += `${getFormattedTime(Math.floor(days))}D `;
   }
 
   if (hours) {
-    text += `${getFormattedTime(hours)}H `;
+    text += `${getFormattedTime(Math.floor(hours))}H `;
   }
 
-  text += `${getFormattedTime(minutes)}M`;
+  if (minutes) {
+    text += `${getFormattedTime(Math.floor(minutes))}M`;
+  }
+
 
   return text;
 }
@@ -85,13 +97,12 @@ function getLimitTime(time) {
   return `${time.getHours()}:${time.getMinutes()}`;
 }
 
-function getDefaultFlatpickrOptions() {
-  return {
-    dateFormat: 'd/m/y H:i',
-    enableTime: true,
-    // eslint-disable-next-line camelcase
-    time_24hr: true
-  };
+function setEndTime(startTime) {
+  const endTime = new Date(startTime);
+  endTime.setHours(startTime.getHours() + getRandomPositiveInteger(HOURS_INCREMENT.MIN, HOURS_INCREMENT.MAX));
+  endTime.setMinutes(startTime.getMinutes() + getRandomPositiveInteger(MINUTES_INCREMENT.MIN, MINUTES_INCREMENT.MAX));
+
+  return endTime;
 }
 
-export { getHumanizeEventTime, getDurationText, getRandomDate, getTimeDiff, getLimitTime, getDefaultFlatpickrOptions };
+export { getHumanizeEventTime, getDurationText, getRandomDate, getTimeDiff, getLimitTime, setEndTime };
