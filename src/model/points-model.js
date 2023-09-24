@@ -1,6 +1,5 @@
 import { UpdateType } from '../const.js';
 import Observable from '../framework/observable.js';
-import PointsApiService from '../points-api-service.js';
 import { parseArrayToMap } from '../utils/utils.js';
 export default class PointsModel extends Observable {
   #points = [];
