@@ -1,10 +1,6 @@
 const RANDOM_TEXT = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 const MIN_ELEMENTS = 3;
 
-function getRandomArrayElement(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
 function getRandomArrayElements(array) {
   let firstNumber = getRandomPositiveInteger(0, array.length);
   let secondNumber = getRandomPositiveInteger(0, array.length);
@@ -35,14 +31,6 @@ function generateRandomText() {
   return getRandomArrayElements(wordsList);
 }
 
-function getRandomBoolean() {
-  return Boolean(Math.round(Math.random()));
-}
-
-function getLocaleCompare(a, b) {
-  return a.localeCompare(b);
-}
-
 function capitalizeWord(word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
@@ -51,4 +39,14 @@ function setChecked(checkedElement, element) {
   return element.toLowerCase() === checkedElement ? 'checked' : '';
 }
 
-export { getRandomArrayElement, getRandomPositiveInteger, generateRandomText, getRandomBoolean, getLocaleCompare, capitalizeWord, setChecked };
+function parseArrayToMap(array, key) {
+  const map = new Map();
+  array.forEach((object) => {
+    const id = object[key];
+    map.set(id, object);
+  });
+
+  return map;
+}
+
+export { getRandomPositiveInteger, generateRandomText, capitalizeWord, setChecked, parseArrayToMap };

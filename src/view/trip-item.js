@@ -1,6 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { getDurationText, getHumanizeEventTime } from '../utils/time.js';
-import { getTypeOffers } from '../mock/offers.js';
 
 function isActiveFavorite(isFavorite) {
   return isFavorite ? 'event__favorite-btn--active' : '';
@@ -25,12 +24,12 @@ function createTripItemTemplate(point) {
     startTime,
     endTime,
     isFavorite,
-    price
+    price,
+    offers
   } = point;
   const {name} = destination;
 
   const duration = getDurationText(startTime, endTime);
-  const offers = getTypeOffers(type);
   const itemsElements = offers.map(createOfferTemplate).join('');
 
   return `

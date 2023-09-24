@@ -8,35 +8,38 @@ import { sortPoints } from '../utils/sort.js';
 import { FilterType, SORTS, UpdateType, UserAction } from '../const.js';
 import { filter } from '../utils/filter.js';
 import NewPointPresenter from './new-point-presenter.js';
+import LoadingView from '../view/laoding-view.js';
+import { RenderPosition } from '../render.js';
 export default class BoardPresenter {
   #boardContainer = null;
 
   #pointsModel = null;
   #filterModel = null;
-  #destinationsModel = null;
 
   #sortComponent = null;
   #boardComponent = new BoardView();
   #tripListComponent = new TripListView();
   #emptyListComponent = null;
+  #loadingComponent = new LoadingView();
 
-  #currentSortType = SORTS.DAY.toLowerCase();
+  #currentSortType = SORTS.DAY.title.toLowerCase();
   #newPointPresenter = null;
   #pointsPresenters = new Map();
+  #destinations = null;
   #filterType = FilterType.ALL;
+  #isLoading = true;
 
-  constructor({boardContainer, pointsModel, filterModel, destinationsModel, onNewPointDestroy}) {
+  constructor({boardContainer, pointsModel, filterModel, onNewPointDestroy}) {
     this.#boardContainer = boardContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
-    this.#destinationsModel = destinationsModel;
 
     this.#newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#tripListComponent.element,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy,
-      destinationsNames: this.destinationsNames,
-      getDestinationDataByName: this.#destinationsModel.getDestinationDataByName
+      destinationsNames: this.#getDestinationsNames,
+      getDestinationDataByName: this.#getDestinationDataByName
     });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
@@ -47,10 +50,6 @@ export default class BoardPresenter {
     this.#renderBoard();
   }
 
-  get destinationsNames() {
-    return [...this.#destinationsModel.names];
-  }
-
   get points() {
     this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
@@ -58,6 +57,30 @@ export default class BoardPresenter {
 
     return sortPoints([...filteredPoints], this.#currentSortType);
   }
+
+  #getDestinationsNames() {
+    const destinationsNames = [];
+
+    this.#destinations.forEach((value) => destinationsNames.push(value.name));
+    return destinationsNames;
+  }
+
+  #getDestinationDataByName = (name) => {
+    let destinationData = null;
+
+    this.#destinations.forEach((value) => {
+      if (value.name === name) {
+        destinationData = {...value};
+      }
+    });
+
+    if (destinationData) {
+      destinationData.photos = destinationData.pictures;
+      delete destinationData.pictures;
+    }
+
+    return destinationData;
+  };
 
   createPoint() {
     this.#currentSortType = SORTS.DAY;
@@ -92,6 +115,13 @@ export default class BoardPresenter {
         this.#clearBoard({ resetSortType: true });
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#destinations = this.#pointsModel.destinations;
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
     }
   };
 
@@ -122,12 +152,13 @@ export default class BoardPresenter {
   #renderPoint({ point }) {
     const pointPresenter = new PointPresenter({
       tripListComponent: this.#tripListComponent,
-      getDestinationDataByName: this.#destinationsModel.getDestinationDataByName,
+      getDestinationDataByName: this.#getDestinationDataByName,
       onDataChange: this.#handleViewAction,
-      resetPoints: this.#resetPoints
+      resetPoints: this.#resetPoints,
+      types: this.#pointsModel.types
     });
 
-    pointPresenter.init(point, this.#destinationsModel.names);
+    pointPresenter.init(point, this.#getDestinationsNames());
     this.#pointsPresenters.set(point.id, pointPresenter);
   }
 
@@ -158,12 +189,19 @@ export default class BoardPresenter {
     }
 
     if (resetSortType) {
-      this.#currentSortType = SORTS.DAY.toLowerCase();
+      this.#currentSortType = SORTS.DAY.title.toLowerCase();
     }
+  }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
   }
 
   #renderBoard() {
     render(this.#boardComponent, this.#boardContainer);
+    if (this.#isLoading) {
+      this.#renderLoading();
+    }
 
     if (!this.points.length) {
       this.#renderEmptyList();

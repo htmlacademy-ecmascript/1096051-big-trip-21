@@ -32,6 +32,7 @@ function createTypeItemTemplate(type) {
 function createNewPointTemplate({types, pointOffers, destinations}) {
   const firstDestination = destinations[0];
   const {description, photos, name} = firstDestination;
+  const photosElements = photos.map((photo) => createImageTemplate(photo.src, name)).join('');
   return `
     <li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -95,7 +96,7 @@ function createNewPointTemplate({types, pointOffers, destinations}) {
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              ${photos.map((photo) => createImageTemplate(photo, name)).join('')}
+              ${photosElements}
             </div>
           </div>
         </section>

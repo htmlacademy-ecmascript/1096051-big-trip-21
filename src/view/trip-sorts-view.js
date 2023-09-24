@@ -2,12 +2,12 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { SORTS } from '../const.js';
 import { setChecked } from '../utils/utils.js';
 
-function createSortTemplate(currentSortType, sort) {
-  const sortLower = sort.toLowerCase();
+function createSortTemplate(currentSortType, {title, isDisabled}) {
+  const sortLower = title.toLowerCase();
   return `
     <div class="trip-sort__item  trip-sort__item--${sortLower}">
-      <input id="sort-${sortLower}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sortLower}" data-sort-type="${sortLower}" ${setChecked(currentSortType, sort)}>
-      <label class="trip-sort__btn" for="sort-${sortLower}">${sort}</label>
+      <input id="sort-${sortLower}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sortLower}" data-sort-type="${sortLower}" ${setChecked(currentSortType, title)} ${isDisabled ? 'disabled' : ''}>
+      <label class="trip-sort__btn" for="sort-${sortLower}">${title}</label>
     </div>
   `;
 }

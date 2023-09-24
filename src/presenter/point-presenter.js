@@ -14,14 +14,16 @@ export default class PointPresenter {
 
   #handleDataChange = null;
   #getDestinationDataByName = null;
+  #types = null;
 
   #mod = Mod.DEFAULT;
 
-  constructor({ tripListComponent, onDataChange, getDestinationDataByName, resetPoints }) {
+  constructor({ tripListComponent, onDataChange, getDestinationDataByName, resetPoints, types }) {
     this.#tripListComponent = tripListComponent;
     this.#getDestinationDataByName = getDestinationDataByName;
     this.#handleDataChange = onDataChange;
     this.#resetPoints = resetPoints;
+    this.#types = types;
   }
 
   init(point, destinationsNames) {
@@ -43,7 +45,8 @@ export default class PointPresenter {
       getDestinationDataByName: this.#getDestinationDataByName,
       onFormSubmit: this.#handleFormSubmit,
       onArrowClick: this.#closeForm,
-      onDeleteClick: this.#handleDeleteClick
+      onDeleteClick: this.#handleDeleteClick,
+      types: this.#types
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {

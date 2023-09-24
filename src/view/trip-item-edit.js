@@ -1,7 +1,5 @@
-import { getTypes } from '../mock/types.js';
 import { getHumanizeEventTime, getRandomDate, setEndTime } from '../utils/time.js';
 import { capitalizeWord } from '../utils/utils.js';
-import { getTypeOffers } from '../mock/offers.js';
 import he from 'he';
 
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
@@ -15,7 +13,12 @@ const BLANK_POINT = {
   destination: {
     name: 'Moscow',
     description: 'description',
-    photos: [`https://loremflickr.com/248/152?random=${nanoid()}`],
+    photos: [
+      {
+        src: `https://loremflickr.com/248/152?random=${nanoid()}`,
+        description: 'description'
+      }
+    ],
   },
   startTime: START_TIME,
   endTime: setEndTime(START_TIME),
@@ -61,20 +64,20 @@ function createArrowTemplate() {
   `;
 }
 
-function createTripItemEditTemplate(point, names, isNewPoint) {
+function createTripItemEditTemplate(point, names, isNewPoint, types) {
   const {
     destination,
     type,
     startTime,
     endTime,
-    price
+    price,
+    offers
   } = point;
   const {name, description, photos} = destination;
-  const offers = getTypeOffers(type);
   const offersElements = offers.map(createOfferTemplate).join('');
-  const typesElements = Object.values(getTypes()).map(createTypeItemTemplate).join('');
+  const typesElements = types.map(createTypeItemTemplate).join('');
   const destionationsElements = names.map(createDestinationTemplate).join('');
-  const photosElements = photos.map(createPhotoTemplate).join('');
+  const photosElements = photos.map((photo) => createPhotoTemplate(photo.src)).join('');
 
   return `
     <li class="trip-events__item">
@@ -153,6 +156,7 @@ function createTripItemEditTemplate(point, names, isNewPoint) {
 export default class TripItemEditView extends AbstractStatefulView{
   #point = null;
   #destinationsNames = null;
+  #types = null;
 
   #handleFormSubmit = null;
   #handleButtonClick = null;
@@ -163,10 +167,11 @@ export default class TripItemEditView extends AbstractStatefulView{
   #startDatepicker = null;
   #endDatepicker = null;
 
-  constructor({ point = BLANK_POINT, destinationsNames, onFormSubmit, onArrowClick, getDestinationDataByName, onDeleteClick, isNewPoint = false }) {
+  constructor({ point = BLANK_POINT, destinationsNames, onFormSubmit, onArrowClick, getDestinationDataByName, onDeleteClick, isNewPoint = false, types }) {
     super();
     this.#point = point;
     this.#destinationsNames = destinationsNames;
+    this.#types = types;
     this.#isNewPoint = isNewPoint;
 
     this.#handleFormSubmit = onFormSubmit;
@@ -266,7 +271,7 @@ export default class TripItemEditView extends AbstractStatefulView{
   };
 
   get template() {
-    return createTripItemEditTemplate(this._state, this.#destinationsNames, this.#isNewPoint);
+    return createTripItemEditTemplate(this._state, this.#destinationsNames, this.#isNewPoint, this.#types);
   }
 
   static parseStateToPoint(state) {// todo убрать метод, если расширение не потребует.
