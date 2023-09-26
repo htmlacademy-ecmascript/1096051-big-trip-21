@@ -6,10 +6,7 @@ function createSortTemplate(currentSortType, { title, isDisabled }) {
   const sortLower = title.toLowerCase();
   return `
     <div class="trip-sort__item  trip-sort__item--${sortLower}">
-      <input id="sort-${sortLower}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sortLower}" data-sort-type="${sortLower}" ${setChecked(
-        currentSortType,
-        title
-      )} ${isDisabled ? 'disabled' : ''}>
+      <input id="sort-${sortLower}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sortLower}" data-sort-type="${sortLower}" ${setChecked(currentSortType,title)} ${isDisabled ? 'disabled' : ''}>
       <label class="trip-sort__btn" for="sort-${sortLower}">${title}</label>
     </div>
   `;

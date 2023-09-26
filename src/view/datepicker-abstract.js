@@ -15,7 +15,7 @@ export default class DatepickerAbstract {
     this.#options = {
       dateFormat: 'd/m/y H:i',
       enableTime: true,
-      time_24hr: true,
+      'time_24hr': true,
     };
   }
 
