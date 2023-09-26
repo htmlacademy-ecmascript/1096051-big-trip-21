@@ -1,13 +1,12 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { getDurationText, getHumanizeEventTime } from '../utils/time.js';
-import { getTypeOffers } from '../mock/offers.js';
 
 function isActiveFavorite(isFavorite) {
   return isFavorite ? 'event__favorite-btn--active' : '';
 }
 
 function createOfferTemplate(offer) {
-  const {text, price} = offer;
+  const { text, price } = offer;
 
   return `
     <li class="event__offer">
@@ -19,18 +18,11 @@ function createOfferTemplate(offer) {
 }
 
 function createTripItemTemplate(point) {
-  const {
-    type,
-    destination,
-    startTime,
-    endTime,
-    isFavorite,
-    price
-  } = point;
-  const {name} = destination;
+  const { type, destination, startTime, endTime, isFavorite, price, offers } =
+    point;
+  const { name } = destination;
 
   const duration = getDurationText(startTime, endTime);
-  const offers = getTypeOffers(type);
   const itemsElements = offers.map(createOfferTemplate).join('');
 
   return `
@@ -43,9 +35,9 @@ function createTripItemTemplate(point) {
         <h3 class="event__title">${type} ${name}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${getHumanizeEventTime(startTime, 'ATRIBUTE')}">${getHumanizeEventTime(startTime, 'TIME')}</time>
+            <time class="event__start-time" datetime="${getHumanizeEventTime(startTime,'ATRIBUTE')}">${getHumanizeEventTime(startTime, 'TIME')}</time>
             &mdash;
-            <time class="event__end-time" datetime="${getHumanizeEventTime(endTime, 'ATRIBUTE')}">${getHumanizeEventTime(endTime, 'TIME')}</time>
+            <time class="event__end-time" datetime="${getHumanizeEventTime(endTime,'ATRIBUTE')}">${getHumanizeEventTime(endTime, 'TIME')}</time>
           </p>
           <p class="event__duration">${duration}</p>
         </div>
@@ -76,15 +68,17 @@ export default class TripItemView extends AbstractView {
   #handleArrowClick = null;
   #handleFavoriteClick = null;
 
-  constructor({point, onArrowClick, onFavoriteChange}) {
+  constructor({ point, onArrowClick, onFavoriteChange }) {
     super();
     this.#point = point;
     this.#handleArrowClick = onArrowClick;
     this.#handleFavoriteClick = onFavoriteChange;
 
-    this.element.querySelector('.event__rollup-btn')
+    this.element
+      .querySelector('.event__rollup-btn')
       .addEventListener('click', this.#arrowClickHandler);
-    this.element.querySelector('.event__favorite-btn')
+    this.element
+      .querySelector('.event__favorite-btn')
       .addEventListener('click', this.#favoriteClickHandle);
   }
 

@@ -1,0 +1,19 @@
+# Ignore artifacts:
+build
+markup
+**/.git
+**/.svn
+**/.hg
+**/node_modules
+
+# Ignore all HTML files:
+**/*.html
+
+# Файлы и папки операционной системы
+.DS_Store
+Thumbs.db
+
+# Файлы редактора
+.idea
+*.sublime*
+.vscode

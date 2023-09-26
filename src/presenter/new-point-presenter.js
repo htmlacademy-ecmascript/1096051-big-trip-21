@@ -13,7 +13,13 @@ export default class NewPointPresenter {
 
   #pointEditComponent = null;
 
-  constructor({ pointListContainer, onDataChange, onDestroy, getDestinationDataByName, destinationsNames }) {
+  constructor({
+    pointListContainer,
+    onDataChange,
+    onDestroy,
+    getDestinationDataByName,
+    destinationsNames,
+  }) {
     this.#pointListContainer = pointListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
@@ -31,16 +37,20 @@ export default class NewPointPresenter {
       onDeleteClick: this.#handleDeleteClick,
       getDestinationDataByName: this.#getDestinationDataByName,
       destinationsNames: this.#destinationsNames,
-      isNewPoint: true
+      isNewPoint: true,
     });
 
-    render(this.#pointEditComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
+    render(
+      this.#pointEditComponent,
+      this.#pointListContainer,
+      RenderPosition.AFTERBEGIN
+    );
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
   destroy() {
-    if(this.#pointEditComponent === null) {
+    if (this.#pointEditComponent === null) {
       return;
     }
 
@@ -52,11 +62,10 @@ export default class NewPointPresenter {
   }
 
   #handleFormSubmit = (point) => {
-    this.#handleDataChange(
-      UserAction.ADD_POINT,
-      UpdateType.MINOR,
-      {id: nanoid(), ...point}
-    );
+    this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, {
+      id: nanoid(),
+      ...point,
+    });
     this.destroy();
   };
 

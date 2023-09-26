@@ -35,7 +35,7 @@ export default class FilterPresenter {
     this.#filterComponent = new TripFiltersView({
       filters,
       currentFilterType: this.#filterModel.filter,
-      onFilterTypeChange: this.#handleFilterTypeChange
+      onFilterTypeChange: this.#handleFilterTypeChange,
     });
 
     if (prevFilterComponent === null) {

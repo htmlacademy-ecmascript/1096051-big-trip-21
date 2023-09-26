@@ -9,28 +9,25 @@ export default class DatepickerAbstract {
 
   #handleDateChange = null;
 
-
   constructor({ onDateChange }) {
     this.#handleDateChange = onDateChange;
 
     this.#options = {
       dateFormat: 'd/m/y H:i',
       enableTime: true,
-      'time_24hr': true
+      'time_24hr': true,
     };
   }
 
   createCalendar(point, element, typeDate) {
-    const {startTime, endTime} = point;
+    const { startTime, endTime } = point;
 
     if (typeDate === DATE_TYPE.END) {
       this.#options = {
         ...this.#options,
         minTime: getLimitTime(startTime),
         onClose: (evt) => this.#dateChangeHandler(evt, false),
-        disable: [
-          (date) => date < startTime
-        ]
+        disable: [(date) => date < startTime],
       };
     }
 
@@ -42,17 +39,13 @@ export default class DatepickerAbstract {
         enable: [
           {
             from: new Date(),
-            to: endTime
-          }
-        ]
+            to: endTime,
+          },
+        ],
       };
     }
 
-
-    this.#datepicker = flatpickr(
-      element,
-      this.#options
-    );
+    this.#datepicker = flatpickr(element, this.#options);
   }
 
   #dateChangeHandler(evt, isStartTime) {
@@ -60,7 +53,7 @@ export default class DatepickerAbstract {
   }
 
   removeElement() {
-    if(this.#datepicker) {
+    if (this.#datepicker) {
       this.#datepicker.destroy();
       this.#datepicker = null;
     }

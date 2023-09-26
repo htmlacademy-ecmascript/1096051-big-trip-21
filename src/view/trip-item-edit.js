@@ -1,7 +1,9 @@
-import { getTypes } from '../mock/types.js';
-import { getHumanizeEventTime, getRandomDate, setEndTime } from '../utils/time.js';
+import {
+  getHumanizeEventTime,
+  getRandomDate,
+  setEndTime,
+} from '../utils/time.js';
 import { capitalizeWord } from '../utils/utils.js';
-import { getTypeOffers } from '../mock/offers.js';
 import he from 'he';
 
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
@@ -15,7 +17,12 @@ const BLANK_POINT = {
   destination: {
     name: 'Moscow',
     description: 'description',
-    photos: [`https://loremflickr.com/248/152?random=${nanoid()}`],
+    photos: [
+      {
+        src: `https://loremflickr.com/248/152?random=${nanoid()}`,
+        description: 'description',
+      },
+    ],
   },
   startTime: START_TIME,
   endTime: setEndTime(START_TIME),
@@ -40,7 +47,7 @@ function createTypeItemTemplate(type) {
     </div>`;
 }
 
-function createOfferTemplate({id, text, price}) {
+function createOfferTemplate({ id, text, price }) {
   return `
     <div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}-1" type="checkbox" name="event-offer-${id}" checked>
@@ -61,20 +68,15 @@ function createArrowTemplate() {
   `;
 }
 
-function createTripItemEditTemplate(point, names, isNewPoint) {
-  const {
-    destination,
-    type,
-    startTime,
-    endTime,
-    price
-  } = point;
-  const {name, description, photos} = destination;
-  const offers = getTypeOffers(type);
+function createTripItemEditTemplate(point, names, isNewPoint, types) {
+  const { destination, type, startTime, endTime, price, offers } = point;
+  const { name, description, photos } = destination;
   const offersElements = offers.map(createOfferTemplate).join('');
-  const typesElements = Object.values(getTypes()).map(createTypeItemTemplate).join('');
+  const typesElements = types.map(createTypeItemTemplate).join('');
   const destionationsElements = names.map(createDestinationTemplate).join('');
-  const photosElements = photos.map(createPhotoTemplate).join('');
+  const photosElements = photos
+    .map((photo) => createPhotoTemplate(photo.src))
+    .join('');
 
   return `
     <li class="trip-events__item">
@@ -107,10 +109,10 @@ function createTripItemEditTemplate(point, names, isNewPoint) {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getHumanizeEventTime(startTime, 'FORM')}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getHumanizeEventTime(startTime,'FORM')}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getHumanizeEventTime(endTime, 'FORM')}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getHumanizeEventTime(endTime,'FORM')}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -150,9 +152,10 @@ function createTripItemEditTemplate(point, names, isNewPoint) {
   `;
 }
 
-export default class TripItemEditView extends AbstractStatefulView{
+export default class TripItemEditView extends AbstractStatefulView {
   #point = null;
   #destinationsNames = null;
+  #types = null;
 
   #handleFormSubmit = null;
   #handleButtonClick = null;
@@ -163,10 +166,20 @@ export default class TripItemEditView extends AbstractStatefulView{
   #startDatepicker = null;
   #endDatepicker = null;
 
-  constructor({ point = BLANK_POINT, destinationsNames, onFormSubmit, onArrowClick, getDestinationDataByName, onDeleteClick, isNewPoint = false }) {
+  constructor({
+    point = BLANK_POINT,
+    destinationsNames,
+    onFormSubmit,
+    onArrowClick,
+    getDestinationDataByName,
+    onDeleteClick,
+    isNewPoint = false,
+    types,
+  }) {
     super();
     this.#point = point;
     this.#destinationsNames = destinationsNames;
+    this.#types = types;
     this.#isNewPoint = isNewPoint;
 
     this.#handleFormSubmit = onFormSubmit;
@@ -178,8 +191,12 @@ export default class TripItemEditView extends AbstractStatefulView{
       this.#point.id = nanoid();
     }
 
-    this.#startDatepicker = new DatepickerAbstract({ onDateChange: this.#dateChangeHandler });
-    this.#endDatepicker = new DatepickerAbstract({ onDateChange: this.#dateChangeHandler });
+    this.#startDatepicker = new DatepickerAbstract({
+      onDateChange: this.#dateChangeHandler,
+    });
+    this.#endDatepicker = new DatepickerAbstract({
+      onDateChange: this.#dateChangeHandler,
+    });
 
     this._setState(TripItemEditView.parsePointToStatic(this.#point));
     this._restoreHandlers();
@@ -193,18 +210,24 @@ export default class TripItemEditView extends AbstractStatefulView{
   }
 
   _restoreHandlers() {
-    this.element.querySelector('form')
+    this.element
+      .querySelector('form')
       .addEventListener('submit', this.#submitFormHandler);
-    this.element.querySelector('.event__type-group')
+    this.element
+      .querySelector('.event__type-group')
       .addEventListener('change', this.#typeChangeHandler);
-    this.element.querySelector('#event-destination-1')
+    this.element
+      .querySelector('#event-destination-1')
       .addEventListener('input', this.#destinationChangeHandler);
-    this.element.querySelector('.event__reset-btn')
+    this.element
+      .querySelector('.event__reset-btn')
       .addEventListener('click', this.#deleteClickHandler);
-    this.element.querySelector('#event-price-1')
+    this.element
+      .querySelector('#event-price-1')
       .addEventListener('change', this.#priceChangeHandler);
     if (!this.#isNewPoint) {
-      this.element.querySelector('.event__rollup-btn')
+      this.element
+        .querySelector('.event__rollup-btn')
         .addEventListener('click', this.#arrowButtonClickHandler);
     }
 
@@ -228,7 +251,7 @@ export default class TripItemEditView extends AbstractStatefulView{
   #arrowButtonClickHandler = (evt) => {
     evt.preventDefault();
 
-    this.updateElement({...this.#point});
+    this.updateElement({ ...this.#point });
     this.#handleButtonClick();
   };
 
@@ -236,11 +259,14 @@ export default class TripItemEditView extends AbstractStatefulView{
     const newType = capitalizeWord(evt.target.value);
 
     evt.preventDefault();
-    this.updateElement({...this.#point, type: newType});
+    this.updateElement({ ...this.#point, type: newType });
   };
 
   #dateChangeHandler = (evt, isStartTime) => {
-    this.updateElement({...this._state, [isStartTime ? 'startTime' : 'endTime']: new Date(evt)});
+    this.updateElement({
+      ...this._state,
+      [isStartTime ? 'startTime' : 'endTime']: new Date(evt),
+    });
   };
 
   #deleteClickHandler = (evt) => {
@@ -255,25 +281,32 @@ export default class TripItemEditView extends AbstractStatefulView{
     evt.preventDefault();
 
     if (destinationData !== null) {
-      this.updateElement({...this.#point, destination: destinationData});
+      this.updateElement({ ...this.#point, destination: destinationData });
     }
   };
 
   #priceChangeHandler = (evt) => {
     evt.preventDefault();
 
-    this._setState({price: Number(evt.target.value)});
+    this._setState({ price: Number(evt.target.value) });
   };
 
   get template() {
-    return createTripItemEditTemplate(this._state, this.#destinationsNames, this.#isNewPoint);
+    return createTripItemEditTemplate(
+      this._state,
+      this.#destinationsNames,
+      this.#isNewPoint,
+      this.#types
+    );
   }
 
-  static parseStateToPoint(state) {// todo убрать метод, если расширение не потребует.
-    return {...state};
+  static parseStateToPoint(state) {
+    // todo убрать метод, если расширение не потребует.
+    return { ...state };
   }
 
-  static parsePointToStatic(point) {// todo убрать метод, если расширение не потребует.
-    return {...point};
+  static parsePointToStatic(point) {
+    // todo убрать метод, если расширение не потребует.
+    return { ...point };
   }
 }

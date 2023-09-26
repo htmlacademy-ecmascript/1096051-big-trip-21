@@ -14,14 +14,22 @@ export default class PointPresenter {
 
   #handleDataChange = null;
   #getDestinationDataByName = null;
+  #types = null;
 
   #mod = Mod.DEFAULT;
 
-  constructor({ tripListComponent, onDataChange, getDestinationDataByName, resetPoints }) {
+  constructor({
+    tripListComponent,
+    onDataChange,
+    getDestinationDataByName,
+    resetPoints,
+    types,
+  }) {
     this.#tripListComponent = tripListComponent;
     this.#getDestinationDataByName = getDestinationDataByName;
     this.#handleDataChange = onDataChange;
     this.#resetPoints = resetPoints;
+    this.#types = types;
   }
 
   init(point, destinationsNames) {
@@ -34,7 +42,7 @@ export default class PointPresenter {
     this.#pointComponent = new TripItemView({
       point: this.#point,
       onArrowClick: this.#openForm,
-      onFavoriteChange: this.#handleFavoriteChange
+      onFavoriteChange: this.#handleFavoriteChange,
     });
 
     this.#pointEditComponent = new TripItemEditView({
@@ -43,7 +51,8 @@ export default class PointPresenter {
       getDestinationDataByName: this.#getDestinationDataByName,
       onFormSubmit: this.#handleFormSubmit,
       onArrowClick: this.#closeForm,
-      onDeleteClick: this.#handleDeleteClick
+      onDeleteClick: this.#handleDeleteClick,
+      types: this.#types,
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -55,7 +64,9 @@ export default class PointPresenter {
       replace(this.#pointComponent, prevPointComponent);
     }
 
-    if (this.#tripListComponent.element.contains(prevPointEditComponent.element)) {
+    if (
+      this.#tripListComponent.element.contains(prevPointEditComponent.element)
+    ) {
       replace(this.#pointEditComponent, prevPointEditComponent);
     }
 
@@ -69,29 +80,20 @@ export default class PointPresenter {
   }
 
   #handleFavoriteChange = () => {
-    this.#handleDataChange(
-      UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
-      {...this.#point, isFavorite: !this.#point.isFavorite}
-    );
+    this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.MINOR, {
+      ...this.#point,
+      isFavorite: !this.#point.isFavorite,
+    });
   };
 
   #handleFormSubmit = (point) => {
-    this.#handleDataChange(
-      UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
-      point
-    );
+    this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.MINOR, point);
 
     this.#closeForm();
   };
 
   #handleDeleteClick = (point) => {
-    this.#handleDataChange(
-      UserAction.DELETE_POINT,
-      UpdateType.MINOR,
-      point
-    );
+    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
   };
 
   #escKeydownHandler = (evt) => {

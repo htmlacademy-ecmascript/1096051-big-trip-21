@@ -6,7 +6,7 @@ const FORMAT_EVENT = {
   TIME: 'hh:mm',
   ATRIBUTE: 'YYYY-MM-DDTHH:mm',
   FORM: 'DD/MM/YY HH:mm',
-  TRIP_DATE: 'MMM DD'
+  TRIP_DATE: 'MMM DD',
 };
 
 const TIME = {
@@ -20,11 +20,11 @@ const TIME = {
 
 const HOURS_INCREMENT = {
   MIN: 1,
-  MAX: 24
+  MAX: 24,
 };
 const MINUTES_INCREMENT = {
   MIN: 1,
-  MAX: 60
+  MAX: 60,
 };
 
 function getHumanizeEventTime(date, type) {
@@ -35,7 +35,7 @@ function getFormattedTime(time) {
   return String(time).length < 2 ? String(0) + time : time;
 }
 
-function getDurationFormatTime (minutes, hours, days) {
+function getDurationFormatTime(minutes, hours, days) {
   let text = '';
   if (days) {
     text += `${getFormattedTime(Math.floor(days))}D `;
@@ -48,7 +48,6 @@ function getDurationFormatTime (minutes, hours, days) {
   if (minutes) {
     text += `${getFormattedTime(Math.floor(minutes))}M`;
   }
-
 
   return text;
 }
@@ -82,15 +81,7 @@ function getRandomDate() {
   const minute = getRandomPositiveInteger(1, TIME.MAX_MINUTES);
   const second = getRandomPositiveInteger(1, TIME.MAX_SECONDS);
 
-
-  return new Date(
-    TIME.YEAR,
-    month,
-    day,
-    hour,
-    minute,
-    second
-  );
+  return new Date(TIME.YEAR, month, day, hour, minute, second);
 }
 
 function getLimitTime(time) {
@@ -99,10 +90,23 @@ function getLimitTime(time) {
 
 function setEndTime(startTime) {
   const endTime = new Date(startTime);
-  endTime.setHours(startTime.getHours() + getRandomPositiveInteger(HOURS_INCREMENT.MIN, HOURS_INCREMENT.MAX));
-  endTime.setMinutes(startTime.getMinutes() + getRandomPositiveInteger(MINUTES_INCREMENT.MIN, MINUTES_INCREMENT.MAX));
+  endTime.setHours(
+    startTime.getHours() +
+      getRandomPositiveInteger(HOURS_INCREMENT.MIN, HOURS_INCREMENT.MAX)
+  );
+  endTime.setMinutes(
+    startTime.getMinutes() +
+      getRandomPositiveInteger(MINUTES_INCREMENT.MIN, MINUTES_INCREMENT.MAX)
+  );
 
   return endTime;
 }
 
-export { getHumanizeEventTime, getDurationText, getRandomDate, getTimeDiff, getLimitTime, setEndTime };
+export {
+  getHumanizeEventTime,
+  getDurationText,
+  getRandomDate,
+  getTimeDiff,
+  getLimitTime,
+  setEndTime,
+};
