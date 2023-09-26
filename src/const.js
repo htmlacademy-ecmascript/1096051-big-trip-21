@@ -1,40 +1,40 @@
 const Mod = {
   DEFAULT: 'default',
-  EDIT: 'edit'
+  EDIT: 'edit',
 };
 
 const SORTS = {
   DAY: {
     title: 'Day',
-    isDisabled: false
+    isDisabled: false,
   },
   EVENT: {
     title: 'Event',
-    isDisabled: true
+    isDisabled: true,
   },
   TIME: {
     title: 'Time',
-    isDisabled: false
+    isDisabled: false,
   },
   PRICE: {
     title: 'Price',
-    isDisabled: false
+    isDisabled: false,
   },
   OFFERS: {
     title: 'Offers',
-    isDisabled: true
-  }
+    isDisabled: true,
+  },
 };
 
 const DATE_TYPE = {
   START: 'START',
-  END: 'END'
+  END: 'END',
 };
 
 const UserAction = {
   UPDATE_POINT: 'UPDATE_POINT',
   ADD_POINT: 'ADD_POINT',
-  DELETE_POINT: 'DELTE_POINT'
+  DELETE_POINT: 'DELTE_POINT',
 };
 
 const UpdateType = {

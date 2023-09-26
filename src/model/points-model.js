@@ -36,7 +36,13 @@ export default class PointsModel extends Observable {
       this.#offers = this.#parseOffersToMap(offers);
 
       const points = await this.#pointsApiService.points;
-      this.#points = points.map((point) => this.#adaptToClient(point, this.#getPointDestination(point), this.#getPointOffers(point)));
+      this.#points = points.map((point) =>
+        this.#adaptToClient(
+          point,
+          this.#getPointDestination(point),
+          this.#getPointOffers(point)
+        )
+      );
     } catch (err) {
       this.#points = [];
     }
@@ -71,15 +77,19 @@ export default class PointsModel extends Observable {
 
     try {
       const point = await this.#pointsApiService.updatePoint(update);
-      const updatePoint = this.#adaptToClient(point, this.#getPointDestination(point), this.#getPointOffers(point));
+      const updatePoint = this.#adaptToClient(
+        point,
+        this.#getPointDestination(point),
+        this.#getPointOffers(point)
+      );
 
       this.#points = [
         ...this.#points.slice(0, index),
         updatePoint,
-        ...this.#points.slice(index + 1)
+        ...this.#points.slice(index + 1),
       ];
       this._notify(updateType, update);
-    } catch(err) {
+    } catch (err) {
       throw new Error('Can\'t update point');
     }
   }
@@ -93,17 +103,14 @@ export default class PointsModel extends Observable {
 
     this.#points = [
       ...this.#points.slice(0, index),
-      ...this.#points.slice(index + 1)
+      ...this.#points.slice(index + 1),
     ];
 
     this._notify(updateType, update);
   }
 
   addPoint(updateType, update) {
-    this.#points = [
-      update,
-      ...this.#points
-    ];
+    this.#points = [update, ...this.#points];
 
     this._notify(updateType, update);
   }
@@ -113,9 +120,7 @@ export default class PointsModel extends Observable {
   }
 
   #getAdaptedDestination(destination) {
-    destination = {...destination,
-      photos: destination.pictures
-    };
+    destination = { ...destination, photos: destination.pictures };
     delete destination.pictures;
 
     return destination;
@@ -123,9 +128,7 @@ export default class PointsModel extends Observable {
 
   #getAdaptedOffers(offers) {
     offers = offers.map((offer) => {
-      offer = {...offer,
-        text: offer.title
-      };
+      offer = { ...offer, text: offer.title };
       delete offer.title;
 
       return offer;
@@ -138,12 +141,19 @@ export default class PointsModel extends Observable {
     destination = this.#getAdaptedDestination(destination);
     offers = this.#getAdaptedOffers(offers);
 
-    const adaptedPoint = {...point,
+    const adaptedPoint = {
+      ...point,
       offers,
       destination,
       price: point['base_price'],
-      startTime: point['date_from'] !== null ? new Date(point['date_from']) : point['date_from'],
-      endTime: point['date_to'] !== null ? new Date(point['date_to']) : point['date_to'],
+      startTime:
+        point['date_from'] !== null
+          ? new Date(point['date_from'])
+          : point['date_from'],
+      endTime:
+        point['date_to'] !== null
+          ? new Date(point['date_to'])
+          : point['date_to'],
       isFavorite: point['is_favorite'],
     };
 

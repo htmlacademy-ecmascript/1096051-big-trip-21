@@ -5,7 +5,7 @@ const EmptyListTextType = {
   [FilterType.ALL]: 'Click New Event to create your first point',
   [FilterType.PAST]: 'There are no past events now',
   [FilterType.PRESENT]: 'There are no present events now',
-  [FilterType.FUTURE]: 'There are no future events now'
+  [FilterType.FUTURE]: 'There are no future events now',
 };
 
 function createListEmptyTemplate(filterType) {
@@ -16,7 +16,7 @@ function createListEmptyTemplate(filterType) {
   `;
 }
 
-export default class TripListEmptyView extends AbstractView{
+export default class TripListEmptyView extends AbstractView {
   #filterType = null;
 
   constructor({ filterType }) {
@@ -25,6 +25,6 @@ export default class TripListEmptyView extends AbstractView{
   }
 
   get template() {
-    return (createListEmptyTemplate(this.#filterType));
+    return createListEmptyTemplate(this.#filterType);
   }
 }

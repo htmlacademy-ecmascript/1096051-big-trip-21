@@ -6,7 +6,9 @@ function getTotalPrice(points) {
 }
 
 function getDestinationsText(points) {
-  const destinationsList = sortPoints(points).map(({destination}) => destination.name);
+  const destinationsList = sortPoints(points).map(
+    ({ destination }) => destination.name
+  );
 
   if (points.length > 3) {
     return `${destinationsList.at(0)} —...— ${destinationsList.at(-1)}`;
@@ -16,12 +18,12 @@ function getDestinationsText(points) {
 }
 
 function getStartTripDate(points) {
-  const minDate = Math.min(...points.map(({startTime}) => startTime));
+  const minDate = Math.min(...points.map(({ startTime }) => startTime));
   return getHumanizeEventTime(minDate, 'TRIP_DATE');
 }
 
 function getEndTripDate(points) {
-  const maxDate = Math.max(...points.map(({endTime}) => endTime));
+  const maxDate = Math.max(...points.map(({ endTime }) => endTime));
   return getHumanizeEventTime(maxDate, 'TRIP_DATE');
 }
 

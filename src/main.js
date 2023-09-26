@@ -14,27 +14,27 @@ const tripMain = document.querySelector('.trip-main');
 const tripFilters = tripMain.querySelector('.trip-controls__filters');
 const tripEvents = document.querySelector('.trip-events');
 const pointsModel = new PointsModel({
-  pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION)
+  pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION),
 });
 const filterModel = new FilterModel();
 const boardPresenter = new BoardPresenter({
   boardContainer: tripEvents,
   pointsModel,
   filterModel,
-  onNewPointDestroy: handleNewPointFormClose
+  onNewPointDestroy: handleNewPointFormClose,
 });
 const filterPresenter = new FilterPresenter({
   filterContainer: tripFilters,
   filterModel,
-  pointsModel
+  pointsModel,
 });
 const tripInfoPresenter = new TripInfoPresenter({
   pointsModel,
   infoContainer: tripMain,
-  filterModel
+  filterModel,
 });
 const newPointButtonComponent = new NewPointButtonView({
-  onButtonClick: handleNewPointButtonClick
+  onButtonClick: handleNewPointButtonClick,
 });
 
 function handleNewPointFormClose() {
@@ -49,8 +49,6 @@ function handleNewPointButtonClick() {
 tripInfoPresenter.init();
 filterPresenter.init();
 boardPresenter.init();
-pointsModel.init()
-  .finally(() => {
-    render(newPointButtonComponent, tripMain);
-  });
-
+pointsModel.init().finally(() => {
+  render(newPointButtonComponent, tripMain);
+});

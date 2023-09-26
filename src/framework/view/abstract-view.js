@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import { createElement } from '../render.js';
 import './abstract-view.css';
 
 /** @const {string} Класс, реализующий эффект "покачивания головой" */
@@ -16,7 +16,7 @@ export default class AbstractView {
 
   constructor() {
     if (new.target === AbstractView) {
-      throw new Error('Can\'t instantiate AbstractView, only concrete one.');
+      throw new Error("Can't instantiate AbstractView, only concrete one.");
     }
   }
 

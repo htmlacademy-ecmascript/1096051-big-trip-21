@@ -4,7 +4,7 @@ import { getTimeDiff } from './time.js';
 const Sorter = {
   [SORTS.TIME.title.toLowerCase()]: sortByTime,
   [SORTS.PRICE.title.toLowerCase()]: sortByPrice,
-  [SORTS.DAY.title.toLowerCase()]: sortByDay
+  [SORTS.DAY.title.toLowerCase()]: sortByDay,
 };
 
 function sortByDay(a, b) {

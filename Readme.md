@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
-* Студент: [Павел Данилец](https://up.htmlacademy.ru/ecmascript/21/user/1096051).
-* Наставник: [Роман Усков](https://up.htmlacademy.ru/profession/fullstack/6/ecmascript/21/user/1019285).
+- Студент: [Павел Данилец](https://up.htmlacademy.ru/ecmascript/21/user/1096051).
+- Наставник: [Роман Усков](https://up.htmlacademy.ru/profession/fullstack/6/ecmascript/21/user/1019285).
 
 ---
 

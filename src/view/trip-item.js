@@ -6,7 +6,7 @@ function isActiveFavorite(isFavorite) {
 }
 
 function createOfferTemplate(offer) {
-  const {text, price} = offer;
+  const { text, price } = offer;
 
   return `
     <li class="event__offer">
@@ -18,16 +18,9 @@ function createOfferTemplate(offer) {
 }
 
 function createTripItemTemplate(point) {
-  const {
-    type,
-    destination,
-    startTime,
-    endTime,
-    isFavorite,
-    price,
-    offers
-  } = point;
-  const {name} = destination;
+  const { type, destination, startTime, endTime, isFavorite, price, offers } =
+    point;
+  const { name } = destination;
 
   const duration = getDurationText(startTime, endTime);
   const itemsElements = offers.map(createOfferTemplate).join('');
@@ -35,16 +28,25 @@ function createTripItemTemplate(point) {
   return `
     <li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="2019-03-18">${getHumanizeEventTime(startTime, 'DATE')}</time>
+        <time class="event__date" datetime="2019-03-18">${getHumanizeEventTime(
+          startTime,
+          'DATE'
+        )}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </div>
         <h3 class="event__title">${type} ${name}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${getHumanizeEventTime(startTime, 'ATRIBUTE')}">${getHumanizeEventTime(startTime, 'TIME')}</time>
+            <time class="event__start-time" datetime="${getHumanizeEventTime(
+              startTime,
+              'ATRIBUTE'
+            )}">${getHumanizeEventTime(startTime, 'TIME')}</time>
             &mdash;
-            <time class="event__end-time" datetime="${getHumanizeEventTime(endTime, 'ATRIBUTE')}">${getHumanizeEventTime(endTime, 'TIME')}</time>
+            <time class="event__end-time" datetime="${getHumanizeEventTime(
+              endTime,
+              'ATRIBUTE'
+            )}">${getHumanizeEventTime(endTime, 'TIME')}</time>
           </p>
           <p class="event__duration">${duration}</p>
         </div>
@@ -55,7 +57,9 @@ function createTripItemTemplate(point) {
         <ul class="event__selected-offers">
           ${itemsElements}
         </ul>
-        <button class="event__favorite-btn ${isActiveFavorite(isFavorite)}" type="button">
+        <button class="event__favorite-btn ${isActiveFavorite(
+          isFavorite
+        )}" type="button">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
             <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
@@ -75,15 +79,17 @@ export default class TripItemView extends AbstractView {
   #handleArrowClick = null;
   #handleFavoriteClick = null;
 
-  constructor({point, onArrowClick, onFavoriteChange}) {
+  constructor({ point, onArrowClick, onFavoriteChange }) {
     super();
     this.#point = point;
     this.#handleArrowClick = onArrowClick;
     this.#handleFavoriteClick = onFavoriteChange;
 
-    this.element.querySelector('.event__rollup-btn')
+    this.element
+      .querySelector('.event__rollup-btn')
       .addEventListener('click', this.#arrowClickHandler);
-    this.element.querySelector('.event__favorite-btn')
+    this.element
+      .querySelector('.event__favorite-btn')
       .addEventListener('click', this.#favoriteClickHandle);
   }
 

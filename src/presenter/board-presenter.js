@@ -29,7 +29,7 @@ export default class BoardPresenter {
   #filterType = FilterType.ALL;
   #isLoading = true;
 
-  constructor({boardContainer, pointsModel, filterModel, onNewPointDestroy}) {
+  constructor({ boardContainer, pointsModel, filterModel, onNewPointDestroy }) {
     this.#boardContainer = boardContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
@@ -39,7 +39,7 @@ export default class BoardPresenter {
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy,
       destinationsNames: this.#getDestinationsNames,
-      getDestinationDataByName: this.#getDestinationDataByName
+      getDestinationDataByName: this.#getDestinationDataByName,
     });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
@@ -70,7 +70,7 @@ export default class BoardPresenter {
 
     this.#destinations.forEach((value) => {
       if (value.name === name) {
-        destinationData = {...value};
+        destinationData = { ...value };
       }
     });
 
@@ -89,7 +89,7 @@ export default class BoardPresenter {
   }
 
   #handleViewAction = (actionType, updateType, update) => {
-    switch(actionType) {
+    switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointsModel.updatePoint(updateType, update);
         break;
@@ -103,7 +103,7 @@ export default class BoardPresenter {
   };
 
   #handleModelEvent = (updateType, data) => {
-    switch(updateType) {
+    switch (updateType) {
       case UpdateType.PATCH:
         this.#pointsPresenters.get(data.id).init(data, this.destinationsNames);
         break;
@@ -138,7 +138,7 @@ export default class BoardPresenter {
   #renderSorts() {
     this.#sortComponent = new TripSortsView({
       currentSortType: this.#currentSortType,
-      onSortChange: this.#handleSortChange
+      onSortChange: this.#handleSortChange,
     });
 
     render(this.#sortComponent, this.#boardComponent.element);
@@ -155,7 +155,7 @@ export default class BoardPresenter {
       getDestinationDataByName: this.#getDestinationDataByName,
       onDataChange: this.#handleViewAction,
       resetPoints: this.#resetPoints,
-      types: this.#pointsModel.types
+      types: this.#pointsModel.types,
     });
 
     pointPresenter.init(point, this.#getDestinationsNames());
@@ -168,7 +168,7 @@ export default class BoardPresenter {
 
   #renderEmptyList() {
     this.#emptyListComponent = new TripListEmptyView({
-      filterType: this.#filterType
+      filterType: this.#filterType,
     });
     render(this.#emptyListComponent, this.#boardComponent.element);
   }
@@ -194,7 +194,11 @@ export default class BoardPresenter {
   }
 
   #renderLoading() {
-    render(this.#loadingComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
+    render(
+      this.#loadingComponent,
+      this.#boardComponent.element,
+      RenderPosition.AFTERBEGIN
+    );
   }
 
   #renderBoard() {

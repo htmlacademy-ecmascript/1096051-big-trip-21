@@ -1,4 +1,5 @@
-const RANDOM_TEXT = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+const RANDOM_TEXT =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 const MIN_ELEMENTS = 3;
 
 function getRandomArrayElements(array) {
@@ -18,7 +19,7 @@ function getRandomArrayElements(array) {
   return array.slice(min, max);
 }
 
-function getRandomPositiveInteger (min, max) {
+function getRandomPositiveInteger(min, max) {
   const lower = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
   const upper = Math.floor(Math.max(Math.abs(min), Math.abs(max)));
   const result = Math.random() * (upper - lower + 1) + lower;
@@ -49,4 +50,10 @@ function parseArrayToMap(array, key) {
   return map;
 }
 
-export { getRandomPositiveInteger, generateRandomText, capitalizeWord, setChecked, parseArrayToMap };
+export {
+  getRandomPositiveInteger,
+  generateRandomText,
+  capitalizeWord,
+  setChecked,
+  parseArrayToMap,
+};
