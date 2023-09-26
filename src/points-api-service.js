@@ -1,4 +1,5 @@
 import ApiService from './framework/api-service.js';
+import { omit } from './utils/utils.js';
 
 export default class PointsApiService extends ApiService {
   get points() {
@@ -51,11 +52,7 @@ export default class PointsApiService extends ApiService {
       'is_favorite': point.isFavorite,
     };
 
-    delete adaptedPoint.price;
-    delete adaptedPoint.startTime;
-    delete adaptedPoint.endTime;
-    delete adaptedPoint.isFavorite;
-
-    return adaptedPoint;
+    const updatePoint = omit(adaptedPoint, 'price', 'startTime', 'endTime', 'isFavorite');
+    return updatePoint;
   }
 }

@@ -1,6 +1,6 @@
 import { UpdateType } from '../const.js';
 import Observable from '../framework/observable.js';
-import { parseArrayToMap } from '../utils/utils.js';
+import { omit, parseArrayToMap } from '../utils/utils.js';
 export default class PointsModel extends Observable {
   #points = [];
   #destinations = null;
@@ -157,11 +157,7 @@ export default class PointsModel extends Observable {
       isFavorite: point['is_favorite'],
     };
 
-    delete adaptedPoint['base_price'];
-    delete adaptedPoint['date_from'];
-    delete adaptedPoint['date_to'];
-    delete adaptedPoint['is_favorite'];
-
-    return adaptedPoint;
+    const updatePoint = omit(adaptedPoint, 'base_price', 'date_from', 'date_to', 'is_favorite');
+    return updatePoint;
   }
 }

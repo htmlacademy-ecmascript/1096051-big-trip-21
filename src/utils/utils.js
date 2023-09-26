@@ -50,10 +50,19 @@ function parseArrayToMap(array, key) {
   return map;
 }
 
+function omit(object, ...blacklistedKeys) {
+  const result = { ...object };
+  blacklistedKeys.forEach((key) => {
+    delete result[key];
+  });
+  return result;
+}
+
 export {
   getRandomPositiveInteger,
   generateRandomText,
   capitalizeWord,
   setChecked,
   parseArrayToMap,
+  omit
 };
