@@ -1,71 +1,42 @@
 import { UpdateType } from '../const.js';
 import Observable from '../framework/observable.js';
-import { omit, parseArrayToMap } from '../utils/utils.js';
+import { omit } from '../utils/utils.js';
 export default class PointsModel extends Observable {
   #points = [];
-  #destinations = null;
-  #offers = null;
-  #types = null;
+  #destinationsModel = null;
+  #offersModel = null;
   #pointsApiService = null;
 
-  constructor({ pointsApiService }) {
+  constructor({ pointsApiService, destinationsModel, offersModel }) {
     super();
     this.#pointsApiService = pointsApiService;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
   }
 
   get points() {
     return this.#points;
   }
 
-  get destinations() {
-    return this.#destinations;
-  }
-
-  get types() {
-    const types = [];
-    this.#offers.forEach((value, key) => types.push(key));
-    return types;
-  }
-
   async init() {
     try {
-      const destinations = await this.#pointsApiService.destinations;
-      this.#destinations = parseArrayToMap(destinations, 'id');
-
-      const offers = await this.#pointsApiService.offers;
-      this.#offers = this.#parseOffersToMap(offers);
+      await this.#offersModel.init();
+      await this.#destinationsModel.init();
 
       const points = await this.#pointsApiService.points;
       this.#points = points.map((point) =>
         this.#adaptToClient(
           point,
-          this.#getPointDestination(point),
-          this.#getPointOffers(point)
+          this.#destinationsModel.getPointDestination(point),
+          this.#offersModel.getPointOffers(point)
         )
       );
+      this._notify(UpdateType.INIT);
     } catch (err) {
       this.#points = [];
+      this._notify(UpdateType.ERROR);
+      throw new Error('Failed to load latest route information');
     }
-
-    this._notify(UpdateType.INIT);
-  }
-
-  #getPointDestination(point) {
-    return this.#destinations.get(point.destination);
-  }
-
-  #getPointOffers(point) {
-    const offersByType = this.#offers.get(point.type);
-    return point.offers.map((id) => offersByType.get(id));
-  }
-
-  #parseOffersToMap(offers) {
-    const offersMap = parseArrayToMap(offers, 'type');
-    offersMap.forEach((value, key) => {
-      offersMap.set(key, parseArrayToMap(value.offers, 'id'));
-    });
-
-    return offersMap;
   }
 
   async updatePoint(updateType, update) {
@@ -79,8 +50,8 @@ export default class PointsModel extends Observable {
       const point = await this.#pointsApiService.updatePoint(update);
       const updatePoint = this.#adaptToClient(
         point,
-        this.#getPointDestination(point),
-        this.#getPointOffers(point)
+        this.#destinationsModel.getPointDestination(point),
+        this.#offersModel.getPointOffers(point)
       );
 
       this.#points = [
@@ -88,58 +59,56 @@ export default class PointsModel extends Observable {
         updatePoint,
         ...this.#points.slice(index + 1),
       ];
-      this._notify(updateType, update);
+      this._notify(updateType, updatePoint);
     } catch (err) {
       throw new Error('Can\'t update point');
     }
   }
 
-  deletePoint(updateType, update) {
+  async deletePoint(updateType, update) {
     const index = this.#getPointIndex(update);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexistig point.');
     }
 
-    this.#points = [
-      ...this.#points.slice(0, index),
-      ...this.#points.slice(index + 1),
-    ];
+    try {
+      await this.#pointsApiService.deletePoint(update);
 
-    this._notify(updateType, update);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        ...this.#points.slice(index + 1),
+      ];
+      this._notify(updateType, update);
+    } catch (err) {
+      throw new Error('Can\'t delete point');
+    }
   }
 
-  addPoint(updateType, update) {
-    this.#points = [update, ...this.#points];
+  async addPoint(updateType, update) {
+    try {
+      const point = await this.#pointsApiService.addPoint(update);
+      const newPoint = this.#adaptToClient(
+        point,
+        this.#destinationsModel.getPointDestination(point),
+        this.#offersModel.getPointOffers(point)
+      );
 
-    this._notify(updateType, update);
+      this.#points = [newPoint, ...this.#points];
+
+      this._notify(updateType, newPoint);
+    } catch (err) {
+      throw new Error('Can\'t add point');
+    }
   }
 
   #getPointIndex(update) {
     return this.#points.findIndex((point) => point.id === update.id);
   }
 
-  #getAdaptedDestination(destination) {
-    destination = { ...destination, photos: destination.pictures };
-    delete destination.pictures;
-
-    return destination;
-  }
-
-  #getAdaptedOffers(offers) {
-    offers = offers.map((offer) => {
-      offer = { ...offer, text: offer.title };
-      delete offer.title;
-
-      return offer;
-    });
-
-    return offers;
-  }
-
   #adaptToClient(point, destination, offers) {
-    destination = this.#getAdaptedDestination(destination);
-    offers = this.#getAdaptedOffers(offers);
+    destination = this.#destinationsModel.getAdaptedDestination(destination);
+    offers = this.#offersModel.getAdaptedOffers(offers);
 
     const adaptedPoint = {
       ...point,
