@@ -2,7 +2,14 @@ import { sortPoints } from './sort.js';
 import { getHumanizeEventTime } from './time.js';
 
 function getTotalPrice(points) {
-  return points.reduce((total, point) => total + point.price, 0);
+  return points.reduce((total, point) => {
+    let offersPrice = 0;
+    point.offers.forEach(({price}) => {
+      offersPrice += price;
+    });
+
+    return total + point.price + offersPrice;
+  }, 0);
 }
 
 function getDestinationsText(points) {

@@ -1,17 +1,18 @@
-import { nanoid } from 'nanoid';
 import { UpdateType, UserAction } from '../const.js';
 import { RenderPosition } from '../render.js';
 import { remove, render } from '../framework/render.js';
 import TripItemEditView from '../view/trip-item-edit.js';
 
 export default class NewPointPresenter {
-  #pointListContainer = null;
   #handleDataChange = null;
   #handleDestroy = null;
   #getDestinationDataByName = null;
-  #destinationsNames = null;
+  #getOffersByType = null;
 
+  #pointListContainer = null;
+  #destinationsNames = null;
   #pointEditComponent = null;
+  #types = null;
 
   constructor({
     pointListContainer,
@@ -19,25 +20,30 @@ export default class NewPointPresenter {
     onDestroy,
     getDestinationDataByName,
     destinationsNames,
+    getOffersByType,
+    types
   }) {
     this.#pointListContainer = pointListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
     this.#getDestinationDataByName = getDestinationDataByName;
     this.#destinationsNames = destinationsNames;
+    this.#getOffersByType = getOffersByType;
+    this.#types = types;
   }
 
   init() {
     if (this.#pointEditComponent !== null) {
       return;
     }
-
     this.#pointEditComponent = new TripItemEditView({
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
       getDestinationDataByName: this.#getDestinationDataByName,
       destinationsNames: this.#destinationsNames,
       isNewPoint: true,
+      types: this.#types,
+      getOffersByType: this.#getOffersByType
     });
 
     render(
@@ -61,12 +67,29 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setSaving() {
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  }
+
   #handleFormSubmit = (point) => {
     this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, {
-      id: nanoid(),
       ...point,
     });
-    this.destroy();
   };
 
   #handleDeleteClick = () => {
@@ -74,7 +97,7 @@ export default class NewPointPresenter {
   };
 
   #escKeyDownHandler = (evt) => {
-    if (evt.ket === 'Escape' || evt.key === 'Esc') {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.destroy();
     }

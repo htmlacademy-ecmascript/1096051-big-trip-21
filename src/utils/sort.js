@@ -11,7 +11,7 @@ function sortByDay(a, b) {
   const firstDate = a.startTime;
   const secondDate = b.startTime;
 
-  return secondDate - firstDate;
+  return firstDate - secondDate;
 }
 
 function sortByTime(a, b) {

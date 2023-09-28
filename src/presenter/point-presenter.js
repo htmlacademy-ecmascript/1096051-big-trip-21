@@ -15,6 +15,7 @@ export default class PointPresenter {
   #handleDataChange = null;
   #getDestinationDataByName = null;
   #types = null;
+  #getOffersByType = null;
 
   #mod = Mod.DEFAULT;
 
@@ -24,12 +25,14 @@ export default class PointPresenter {
     getDestinationDataByName,
     resetPoints,
     types,
+    getOffersByType
   }) {
     this.#tripListComponent = tripListComponent;
     this.#getDestinationDataByName = getDestinationDataByName;
     this.#handleDataChange = onDataChange;
     this.#resetPoints = resetPoints;
     this.#types = types;
+    this.#getOffersByType = getOffersByType;
   }
 
   init(point, destinationsNames) {
@@ -53,6 +56,7 @@ export default class PointPresenter {
       onArrowClick: this.#closeForm,
       onDeleteClick: this.#handleDeleteClick,
       types: this.#types,
+      getOffersByType: this.#getOffersByType
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -88,8 +92,6 @@ export default class PointPresenter {
 
   #handleFormSubmit = (point) => {
     this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.MINOR, point);
-
-    this.#closeForm();
   };
 
   #handleDeleteClick = (point) => {
@@ -125,11 +127,46 @@ export default class PointPresenter {
     this.#mod = Mod.DEFAULT;
   }
 
+  setSaving() {
+    if(this.#mod === Mod.EDIT) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true
+      });
+    }
+  }
+
+  setDeleting() {
+    if(this.#mod === Mod.EDIT) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true
+      });
+    }
+  }
+
   setDefaultStatus() {
     if (this.#mod === Mod.DEFAULT) {
       return;
     }
 
     this.#replaceFormToCard();
+  }
+
+  setAborting() {
+    if (this.#mod === Mod.DEFAULT) {
+      this.#pointComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
   }
 }
