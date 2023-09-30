@@ -1,4 +1,4 @@
-import { parseArrayToMap } from '../utils/utils';
+import { omit, parseArrayToMap } from '../utils/utils';
 
 export default class OffersModel {
   #offers = null;
@@ -32,12 +32,9 @@ export default class OffersModel {
   getOffersByType = (type) => {
     const offersByType = this.#offers.get(type).values();
     const arrayOffers = [];
-    for (let offerData of offersByType) {
-      offerData = {...offerData,
-        text: offerData.title
-      };
-      delete offerData.title;
-      arrayOffers.push(offerData);
+    for (const offerData of offersByType) {
+      offerData.text = offerData.title;
+      arrayOffers.push(omit(offerData, 'title'));
     }
 
     return arrayOffers;
@@ -45,10 +42,8 @@ export default class OffersModel {
 
   getAdaptedOffers(offers) {
     offers = offers.map((offer) => {
-      offer = { ...offer, text: offer.title };
-      delete offer.title;
-
-      return offer;
+      offer.text = offer.title;
+      return omit(offer, 'title');
     });
 
     return offers;

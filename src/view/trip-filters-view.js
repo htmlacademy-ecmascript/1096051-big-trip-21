@@ -4,8 +4,8 @@ import { setChecked } from '../utils/utils.js';
 function createFilterTemplate(filter, currentFilterType) {
   const { type, count } = filter;
   return `
-    <div class="trip-filters__item">
-      <input id="filter-${type}" class="trip-filters__item-input  visually-hidden" type="radio" name="trip-filter" value="${type}" ${setChecked(currentFilterType,type)} ${count === 0 ? 'disabled' : ''}>
+    <div class="trip-filters__filter">
+      <input id="filter-${type}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${type}" ${setChecked(currentFilterType,type)} ${count === 0 ? 'disabled' : ''}>
       <label class="trip-filters__label" for="filter-${type}">${type}</label>
     </div>
   `;

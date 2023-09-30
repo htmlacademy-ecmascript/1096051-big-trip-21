@@ -2,11 +2,11 @@ import dayjs from 'dayjs';
 import { getRandomPositiveInteger } from './utils';
 
 const FORMAT_EVENT = {
-  DATE: 'DD MMM',
-  TIME: 'hh:mm',
+  DATE: 'MMM DD',
+  TIME: 'HH:mm',
   ATRIBUTE: 'YYYY-MM-DDTHH:mm',
   FORM: 'DD/MM/YY HH:mm',
-  TRIP_DATE: 'MMM DD',
+  TRIP_DATE: 'DD MMM',
 };
 
 const TIME = {

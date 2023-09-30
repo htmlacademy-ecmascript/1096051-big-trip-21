@@ -2,6 +2,7 @@ import { UpdateType, UserAction } from '../const.js';
 import { RenderPosition } from '../render.js';
 import { remove, render } from '../framework/render.js';
 import TripItemEditView from '../view/trip-item-edit.js';
+import { setStatus } from '../utils/utils.js';
 
 export default class NewPointPresenter {
   #handleDataChange = null;
@@ -68,10 +69,7 @@ export default class NewPointPresenter {
   }
 
   setSaving() {
-    this.#pointEditComponent.updateElement({
-      isDisabled: true,
-      isSaving: true
-    });
+    setStatus(this.#pointEditComponent, {isSaving: true});
   }
 
   setAborting() {

@@ -2,6 +2,7 @@ import TripItemView from '../view/trip-item.js';
 import TripItemEditView from '../view/trip-item-edit.js';
 import { replace, render, remove } from '../framework/render.js';
 import { Mod, UpdateType, UserAction } from '../const.js';
+import { setStatus } from '../utils/utils.js';
 
 export default class PointPresenter {
   #point = null;
@@ -101,8 +102,7 @@ export default class PointPresenter {
   #escKeydownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.#replaceFormToCard();
-      window.removeEventListener('keydown', this.#escKeydownHandler);
+      this.#closeForm();
     }
   };
 
@@ -123,25 +123,20 @@ export default class PointPresenter {
   }
 
   #replaceFormToCard() {
+    this.#pointEditComponent.updateElement({ ...this.#point });
     replace(this.#pointComponent, this.#pointEditComponent);
     this.#mod = Mod.DEFAULT;
   }
 
   setSaving() {
     if(this.#mod === Mod.EDIT) {
-      this.#pointEditComponent.updateElement({
-        isDisabled: true,
-        isSaving: true
-      });
+      setStatus(this.#pointEditComponent, {isSaving: true});
     }
   }
 
   setDeleting() {
     if(this.#mod === Mod.EDIT) {
-      this.#pointEditComponent.updateElement({
-        isDisabled: true,
-        isDeleting: true
-      });
+      setStatus(this.#pointEditComponent, {isDeleting: true});
     }
   }
 

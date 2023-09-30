@@ -46,10 +46,12 @@ const UpdateType = {
 };
 
 const FilterType = {
-  ALL: 'all',
+  EVERYTHING: 'everything',
   FUTURE: 'future',
   PRESENT: 'present',
   PAST: 'past',
 };
 
-export { Mod, SORTS, DATE_TYPE, UserAction, UpdateType, FilterType };
+const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
+
+export { Mod, SORTS, DATE_TYPE, UserAction, UpdateType, FilterType, DAY_MILLISECONDS };
