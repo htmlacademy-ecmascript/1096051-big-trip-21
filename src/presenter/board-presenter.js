@@ -70,7 +70,8 @@ export default class BoardPresenter {
       destinationsNames: this.#getDestinationsNames(),
       getDestinationDataByName: this.#getDestinationDataByName,
       getOffersByType: this.#offersModel.getOffersByType,
-      types: this.#offersModel.types
+      types: this.#offersModel.types,
+      renderEmptyList: this.#renderEmptyList
     });
   }
 
@@ -110,6 +111,7 @@ export default class BoardPresenter {
     this.#currentSortType = SORTS.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init();
+    this.#removeEmptyListComponent();
   }
 
   #handleViewAction = async (actionType, updateType, update) => {
@@ -218,7 +220,7 @@ export default class BoardPresenter {
     this.points.forEach((point) => this.#renderPoint({ point }));
   }
 
-  #renderEmptyList() {
+  #renderEmptyList = () => {
     this.#emptyListComponent = new TripListEmptyView({
       filterType: this.#filterType,
     });
@@ -244,13 +246,16 @@ export default class BoardPresenter {
     this.#clearPointsPresenter();
 
     remove(this.#sortComponent);
-
-    if (this.#emptyListComponent) {
-      remove(this.#emptyListComponent);
-    }
+    this.#removeEmptyListComponent();
 
     if (resetSortType) {
       this.#currentSortType = SORTS.DAY.title.toLowerCase();
+    }
+  }
+
+  #removeEmptyListComponent() {
+    if (this.#emptyListComponent) {
+      remove(this.#emptyListComponent);
     }
   }
 

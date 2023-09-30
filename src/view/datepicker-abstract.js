@@ -2,7 +2,6 @@ import { getLimitTime } from '../utils/time.js';
 import { DATE_TYPE } from '../const.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import { omit } from '../utils/utils.js';
 
 export default class DatepickerAbstract {
   #datepicker = null;
@@ -35,7 +34,7 @@ export default class DatepickerAbstract {
   #setDefaultTimeOptions(isStartTime) {
     this.#options = {
       ...this.#options,
-      onChange: (evt) => this.#dateChangeHandler(evt, isStartTime),
+      onClose: (evt) => this.#dateChangeHandler(evt, isStartTime),
     };
   }
 
@@ -46,10 +45,6 @@ export default class DatepickerAbstract {
         onClose: (evt) => this.#dateChangeHandler(evt, true),
         disable: [(date) => date > endTime]
       };
-
-      if (this.#options.onChange) {
-        this.#options = omit(this.#options, 'onChange');
-      }
       return;
     }
 
@@ -67,10 +62,6 @@ export default class DatepickerAbstract {
         onClose: (evt) => this.#dateChangeHandler(evt, false),
         disable: [(date) => date < startTime],
       };
-
-      if (this.#options.onChange) {
-        this.#options = omit(this.#options, 'onChange');
-      }
       return;
     }
 
