@@ -225,7 +225,7 @@ export default class BoardPresenter {
       filterType: this.#filterType,
     });
     render(this.#emptyListComponent, this.#boardComponent.element);
-  }
+  };
 
   #renderServerFail() {
     this.#serverFailInformationComponent = new ServerFailInfromationView();
