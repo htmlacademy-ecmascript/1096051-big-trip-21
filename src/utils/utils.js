@@ -37,11 +37,7 @@ function omit(object, ...blacklistedKeys) {
 }
 
 function setStatus(component, { isSaving = false, isDeleting = false, isDisabled = true }) {
-  component.updateElement({
-    isDisabled: isDisabled,
-    isSaving: isSaving,
-    isDeleting: isDeleting
-  });
+  component.updateElement({isSaving, isDeleting, isDisabled});
 }
 
 export {

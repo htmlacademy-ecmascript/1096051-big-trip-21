@@ -30,22 +30,14 @@ export default class OffersModel {
   }
 
   getOffersByType = (type) => {
-    const offersByType = this.#offers.get(type).values();
-    const arrayOffers = [];
-    for (const offerData of offersByType) {
-      offerData.text = offerData.title;
-      arrayOffers.push(omit(offerData, 'title'));
-    }
+    const offersByType = Array.from(this.#offers.get(type).values());
+    offersByType.map(({title: text, ...offerData}) => ({...offerData, text}));
 
-    return arrayOffers;
+    return offersByType;
   };
 
   getAdaptedOffers(offers) {
-    offers = offers.map((offer) => {
-      offer.text = offer.title;
-      return omit(offer, 'title');
-    });
-
+    offers.map(({title: text, ...offer}) => ({...offer, text}));
     return offers;
   }
 

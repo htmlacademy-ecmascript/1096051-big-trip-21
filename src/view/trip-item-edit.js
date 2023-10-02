@@ -348,10 +348,12 @@ export default class TripItemEditView extends AbstractStatefulView {
   };
 
   #dateChangeHandler = (evt, isStartTime) => {
-    this.updateElement({
-      ...this._state,
-      [isStartTime ? 'startTime' : 'endTime']: new Date(evt),
-    });
+    if (evt.length) {
+      this.updateElement({
+        ...this._state,
+        [isStartTime ? 'startTime' : 'endTime']: new Date(evt),
+      });
+    }
   };
 
   #destinationChangeHandler = (evt) => {
