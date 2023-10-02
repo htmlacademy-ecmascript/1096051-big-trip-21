@@ -1,4 +1,4 @@
-import { omit, parseArrayToMap } from '../utils/utils';
+import { parseArrayToMap } from '../utils/utils';
 
 export default class OffersModel {
   #offers = null;
