@@ -11,7 +11,7 @@ import { FilterType, SORTS, UpdateType, UserAction } from '../const.js';
 import { RenderPosition } from '../render.js';
 import { sortPoints } from '../utils/sort.js';
 import { filter } from '../utils/filter.js';
-import ServerFailInfromationView from '../view/server-fail-view.js';
+import ServerFailView from '../view/server-fail-view.js';
 
 const TimeLimit = {
   LOWER_LIMIT: 350,
@@ -29,7 +29,7 @@ export default class BoardPresenter {
   #boardComponent = new BoardView();
   #tripListComponent = new TripListView();
   #emptyListComponent = null;
-  #serverFailInformationComponent = null;
+  #serverFailComponent = null;
   #loadingComponent = new LoadingView();
   #uiBlocker = new UiBlocker({
     lowerLimit: TimeLimit.LOWER_LIMIT,
@@ -228,8 +228,8 @@ export default class BoardPresenter {
   };
 
   #renderServerFail() {
-    this.#serverFailInformationComponent = new ServerFailInfromationView();
-    render(this.#serverFailInformationComponent, this.#boardComponent.element);
+    this.#serverFailComponent = new ServerFailView();
+    render(this.#serverFailComponent, this.#boardComponent.element);
   }
 
   #renderList() {

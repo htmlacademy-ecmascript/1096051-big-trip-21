@@ -8,7 +8,7 @@ function createServerFailTemplate() {
   `;
 }
 
-export default class ServerFailInfromationView extends AbstractView {
+export default class ServerFailView extends AbstractView {
   get template() {
     return createServerFailTemplate();
   }

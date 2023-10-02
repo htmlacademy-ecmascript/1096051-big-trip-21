@@ -52,6 +52,4 @@ const FilterType = {
   PAST: 'past',
 };
 
-const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
-
-export { Mod, SORTS, DATE_TYPE, UserAction, UpdateType, FilterType, DAY_MILLISECONDS };
+export { Mod, SORTS, DATE_TYPE, UserAction, UpdateType, FilterType };

@@ -1,6 +1,6 @@
 import BoardPresenter from './presenter/board-presenter.js';
 import PointsModel from './model/points-model.js';
-import FilterPresenter from './presenter/filters-presenter.js';
+import FilterPresenter from './presenter/filter-presenter.js';
 import FilterModel from './model/filter-model.js';
 import TripInfoPresenter from './presenter/trip-info-presenter.js';
 import NewPointButtonView from './view/new-point-button-view.js';

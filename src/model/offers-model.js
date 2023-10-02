@@ -31,15 +31,10 @@ export default class OffersModel {
 
   getOffersByType = (type) => {
     const offersByType = Array.from(this.#offers.get(type).values());
-    offersByType.map(({title: text, ...offerData}) => ({...offerData, text}));
-
-    return offersByType;
+    return offersByType.map(({title: text, ...offerData}) => ({...offerData, text}));
   };
 
-  getAdaptedOffers(offers) {
-    offers.map(({title: text, ...offer}) => ({...offer, text}));
-    return offers;
-  }
+  getAdaptedOffers = (offers) => offers.map(({title: text, ...offer}) => ({...offer, text}));
 
   #parseOffersToMap(offers) {
     const offersMap = parseArrayToMap(offers, 'type');

@@ -1,4 +1,3 @@
-import { DAY_MILLISECONDS } from '../const.js';
 import { sortPoints } from './sort.js';
 import { getHumanizeEventTime } from './time.js';
 
@@ -31,10 +30,8 @@ function getStartTripDate(points) {
 }
 
 function getEndTripDate(points) {
-  let maxDate = Math.max(...points.map(({ endTime }) => endTime));
-  if (new Date(maxDate).getHours() === 0) {
-    maxDate -= DAY_MILLISECONDS;
-  }
+  const maxDate = Math.max(...points.map(({ endTime }) => endTime));
+
   return getHumanizeEventTime(maxDate, 'TRIP_DATE');
 }
 
