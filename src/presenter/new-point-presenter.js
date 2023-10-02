@@ -2,12 +2,14 @@ import { UpdateType, UserAction } from '../const.js';
 import { RenderPosition } from '../render.js';
 import { remove, render } from '../framework/render.js';
 import TripItemEditView from '../view/trip-item-edit.js';
+import { setStatus } from '../utils/utils.js';
 
 export default class NewPointPresenter {
   #handleDataChange = null;
   #handleDestroy = null;
   #getDestinationDataByName = null;
   #getOffersByType = null;
+  #renderEmptyList = null;
 
   #pointListContainer = null;
   #destinationsNames = null;
@@ -21,7 +23,8 @@ export default class NewPointPresenter {
     getDestinationDataByName,
     destinationsNames,
     getOffersByType,
-    types
+    types,
+    renderEmptyList
   }) {
     this.#pointListContainer = pointListContainer;
     this.#handleDataChange = onDataChange;
@@ -30,6 +33,7 @@ export default class NewPointPresenter {
     this.#destinationsNames = destinationsNames;
     this.#getOffersByType = getOffersByType;
     this.#types = types;
+    this.#renderEmptyList = renderEmptyList;
   }
 
   init() {
@@ -68,10 +72,7 @@ export default class NewPointPresenter {
   }
 
   setSaving() {
-    this.#pointEditComponent.updateElement({
-      isDisabled: true,
-      isSaving: true
-    });
+    setStatus(this.#pointEditComponent, {isSaving: true});
   }
 
   setAborting() {
@@ -100,6 +101,7 @@ export default class NewPointPresenter {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.destroy();
+      this.#renderEmptyList();
     }
   };
 }

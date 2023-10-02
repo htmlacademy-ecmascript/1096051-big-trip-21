@@ -19,31 +19,71 @@ export default class DatepickerAbstract {
     };
   }
 
-  createCalendar(point, element, typeDate) {
-    const { startTime, endTime } = point;
+  #setOptionsMaxTime(startTime, endTime, isStartTime) {
+    if (!(startTime.getDate() === endTime.getDate())) {
+      return;
+    }
 
-    if (typeDate === DATE_TYPE.END) {
+    if (isStartTime) {
+      this.#options.maxTime = getLimitTime(endTime);
+    } else {
+      this.#options.minTime = getLimitTime(startTime);
+    }
+  }
+
+  #setDefaultTimeOptions(isStartTime) {
+    this.#options = {
+      ...this.#options,
+      onClose: (evt) => this.#dateChangeHandler(evt, isStartTime),
+    };
+  }
+
+  #setStartTimeCalendarOptions(endTime, startTime) {
+    if (endTime !== null) {
       this.#options = {
         ...this.#options,
-        minTime: getLimitTime(startTime),
+        onClose: (evt) => this.#dateChangeHandler(evt, true),
+        disable: [(date) => date > endTime]
+      };
+      return;
+    }
+
+    if (endTime !== null && startTime !== null) {
+      this.#setOptionsMaxTime(startTime, endTime, true);
+    }
+
+    this.#setDefaultTimeOptions(true);
+  }
+
+  #setEndTimeCalendarOptions(startTime, endTime) {
+    if (startTime !== null) {
+      this.#options = {
+        ...this.#options,
         onClose: (evt) => this.#dateChangeHandler(evt, false),
         disable: [(date) => date < startTime],
       };
+      return;
     }
 
-    if (typeDate === DATE_TYPE.START) {
-      this.#options = {
-        ...this.#options,
-        maxTime: getLimitTime(endTime),
-        onClose: (evt) => this.#dateChangeHandler(evt, true),
-        enable: [
-          {
-            from: new Date(),
-            to: endTime,
-          },
-        ],
-      };
+    if (endTime !== null && startTime !== null) {
+      this.#setOptionsMaxTime(startTime, endTime, false);
     }
+
+    this.#setDefaultTimeOptions(false);
+  }
+
+  createCalendar(point, element, typeDate) {
+    const { startTime, endTime } = point;
+
+    switch (typeDate) {
+      case DATE_TYPE.END:
+        this.#setEndTimeCalendarOptions(startTime, endTime);
+        break;
+      case DATE_TYPE.START:
+        this.#setStartTimeCalendarOptions(endTime, startTime);
+        break;
+    }
+
 
     this.#datepicker = flatpickr(element, this.#options);
   }

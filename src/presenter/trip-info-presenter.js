@@ -1,3 +1,4 @@
+import { UpdateType } from '../const.js';
 import { replace, render, remove } from '../framework/render.js';
 import { RenderPosition } from '../render.js';
 import TripInfoView from '../view/trip-info-view.js';
@@ -24,8 +25,16 @@ export default class TripInfoPresenter {
     this.#renderInfo();
   }
 
-  #handleModelEvent = () => {
-    this.init();
+  #handleModelEvent = (updateType) => {
+    if (this.points.length === 0 && this.#tripInfoComponent) {
+      remove(this.#tripInfoComponent);
+      this.#tripInfoComponent = null;
+    }
+
+    if(!(UpdateType.ERROR === updateType) && this.points.length > 0) {
+      this.init();
+    }
+
   };
 
   #renderInfo() {

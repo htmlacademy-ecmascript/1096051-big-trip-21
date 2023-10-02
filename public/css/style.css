@@ -340,7 +340,7 @@ main {
   display: none;
 }
 
-.trip-filters__item:not(:last-of-type) {
+.trip-filters__filter:not(:last-of-type) {
   margin-right: 19px;
 }
 
@@ -365,11 +365,11 @@ main {
 .trip-filters__label:active {
   opacity: 0.6;
 }
-.trip-filters__item-input:checked + .trip-filters__label {
+.trip-filters__filter-input:checked + .trip-filters__label {
   opacity: 1;
   cursor: default;
 }
-.trip-filters__item-input:disabled + .trip-filters__label {
+.trip-filters__filter-input:disabled + .trip-filters__label {
   opacity: 0.4;
   cursor: default;
 }

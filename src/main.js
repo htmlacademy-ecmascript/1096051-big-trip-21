@@ -66,4 +66,4 @@ boardPresenter.init();
 
 pointsModel.init()
   .then(() => render(newPointButtonComponent, tripMain))
-  .catch((err) => new Error(err)); // Как заглушка
+  .catch((err) => new Error(err.text));

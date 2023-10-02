@@ -14,6 +14,10 @@ function setChecked(checkedElement, element) {
   return element.toLowerCase() === checkedElement ? 'checked' : '';
 }
 
+function getIsDisabled(isDisabled) {
+  return isDisabled ? 'disabled' : '';
+}
+
 function parseArrayToMap(array, key) {
   const map = new Map();
   array.forEach((object) => {
@@ -32,10 +36,16 @@ function omit(object, ...blacklistedKeys) {
   return result;
 }
 
+function setStatus(component, { isSaving = false, isDeleting = false, isDisabled = true }) {
+  component.updateElement({isSaving, isDeleting, isDisabled});
+}
+
 export {
   getRandomPositiveInteger,
   capitalizeWord,
   setChecked,
   parseArrayToMap,
-  omit
+  omit,
+  getIsDisabled,
+  setStatus
 };

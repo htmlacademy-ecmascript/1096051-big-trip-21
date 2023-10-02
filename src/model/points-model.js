@@ -35,7 +35,7 @@ export default class PointsModel extends Observable {
     } catch (err) {
       this.#points = [];
       this._notify(UpdateType.ERROR);
-      throw new Error('Failed to load latest route information');
+      throw new Error(err.text);
     }
   }
 

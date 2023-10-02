@@ -1,19 +1,16 @@
 import {
   getHumanizeEventTime,
-  getRandomDate,
-  setEndTime,
 } from '../utils/time.js';
 import he from 'he';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import DatepickerAbstract from './datepicker-abstract.js';
 import { DATE_TYPE } from '../const.js';
-import { omit, parseArrayToMap } from '../utils/utils.js';
+import { getIsDisabled, omit, parseArrayToMap } from '../utils/utils.js';
 
-const START_TIME = getRandomDate();
 const BLANK_POINT = {
   type: 'flight',
-  startTime: START_TIME,
-  endTime: setEndTime(START_TIME),
+  startTime: null,
+  endTime: null,
   isFavorite: false,
   price: 0,
 };
@@ -64,6 +61,26 @@ function createArrowTemplate() {
   `;
 }
 
+function createEventSectionDestination(description, photosElements) {
+  const text = `
+    <section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      ${description ? `
+        <p class="event__destination-description">${description}</p>
+      ` : ''}
+      ${photosElements ? `
+        <div class="event__photos-container">
+          <div class="event__photos-tape">
+            ${photosElements}
+          </div>
+        </div>
+      ` : ''}
+    </section>
+  `;
+
+  return !description && !photosElements ? '' : text;
+}
+
 function getPhotosElements(photos) {
   if (!photos) {
     return '';
@@ -85,7 +102,6 @@ function getDescription(description) {
 function getDestinationElements(names, currentName) {
   if (!currentName) {
     return `
-    <option value="none" selected>--Chose destination--</option>
     ${names.map((element) => createDestinationTemplate(element)).join('')}
     `;
   }
@@ -111,7 +127,7 @@ function createTripItemEditTemplate(point, names, isNewPoint, types, allOffersBy
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${getIsDisabled(isDisabled)}>
 
             <div class="event__type-list">
               <fieldset class="event__type-group">
@@ -125,17 +141,18 @@ function createTripItemEditTemplate(point, names, isNewPoint, types, allOffersBy
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <select class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" ${isDisabled ? 'disabled' : ''} required>
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" list="destination-list-1" value="${destination.name}" ${getIsDisabled(isDisabled)} required>
+            <datalist id="destination-list-1">
               ${destionationsElements}
-            </select>
+            </datalist>
           </div>
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getHumanizeEventTime(startTime,'FORM')}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTime === null ? '' : getHumanizeEventTime(startTime,'FORM')}" ${isDisabled ? 'disabled' : ''}>
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getHumanizeEventTime(endTime,'FORM')}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endTime === null ? '' : getHumanizeEventTime(endTime,'FORM')}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -146,29 +163,20 @@ function createTripItemEditTemplate(point, names, isNewPoint, types, allOffersBy
             <input class="event__input  event__input--price" id="event-price-1" type="number" min="1" name="event-price" value="${he.encode(String(price))}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
-          <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${getTextDeleteButton(isNewPoint, isDeleting)}</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${getIsDisabled(isDisabled)}>${isSaving ? 'Saving...' : 'Save'}</button>
+          <button class="event__reset-btn" type="reset" ${getIsDisabled(isDisabled)}>${getTextDeleteButton(isNewPoint, isDeleting)}</button>
           ${isNewPoint ? '' : createArrowTemplate()}
         </header>
         <section class="event__details">
-          <section class="event__section  event__section--offers ${allOffersByType.length === 0 ? 'visually-hidden' : ''}">
+        ${allOffersByType.length === 0 ? '' : `
+          <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-            <fieldset class="event__available-offers" ${isDisabled ? 'disabled' : ''}>
+            <fieldset class="event__available-offers" ${getIsDisabled(isDisabled)}>
               ${offersElements}
             </fieldset>
           </section>
-
-          <section class="event__section  event__section--destination ${description && photosElements ? '' : 'visually-hidden'}">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${description}</p>
-
-            <div class="event__photos-container">
-              <div class="event__photos-tape">
-                ${photosElements}
-              </div>
-            </div>
-          </section>
+        `}
+          ${createEventSectionDestination(description, photosElements)}
         </section>
       </form>
     </li>
@@ -244,16 +252,18 @@ export default class TripItemEditView extends AbstractStatefulView {
       .addEventListener('change', this.#typeChangeHandler);
     this.element
       .querySelector('#event-destination-1')
-      .addEventListener('input', this.#destinationChangeHandler);
+      .addEventListener('change', this.#destinationChangeHandler);
     this.element
       .querySelector('.event__reset-btn')
       .addEventListener('click', this.#deleteClickHandler);
     this.element
       .querySelector('#event-price-1')
       .addEventListener('change', this.#priceChangeHandler);
-    this.element
-      .querySelector('.event__available-offers')
-      .addEventListener('change', this.#offersChangeHandler);
+    if (this.#getOffersByType(this._state.type).length !== 0) {
+      this.element
+        .querySelector('.event__available-offers')
+        .addEventListener('change', this.#offersChangeHandler);
+    }
     if (!this.#isNewPoint) {
       this.element
         .querySelector('.event__rollup-btn')
@@ -289,7 +299,7 @@ export default class TripItemEditView extends AbstractStatefulView {
     evt.preventDefault();
     const selectDestinationsElement = evt.target.querySelector('#event-destination-1');
 
-    if (selectDestinationsElement.value === 'none') {
+    if (selectDestinationsElement.value === '') {
       selectDestinationsElement.classList.add('event__input--invalid');
       return;
     }
@@ -299,13 +309,11 @@ export default class TripItemEditView extends AbstractStatefulView {
     }
   };
 
-  #deleteClickHandler = (evt) => {
-    evt.preventDefault();
+  #deleteClickHandler = () => {
     this.#handleDeleteClick(TripItemEditView.parseStateToPoint(this._state));
   };
 
   #offersChangeHandler = (evt) => {
-    evt.preventDefault();
     const currentOfferId = evt.target.id;
     const offersMap = parseArrayToMap(this.#getOffersByType(this._state.type), 'id');
     const changedOfferData = offersMap.get(currentOfferId);
@@ -323,9 +331,7 @@ export default class TripItemEditView extends AbstractStatefulView {
     });
   };
 
-  #arrowButtonClickHandler = (evt) => {
-    evt.preventDefault();
-
+  #arrowButtonClickHandler = () => {
     this.updateElement({ ...this.#point });
     this.#handleButtonClick();
   };
@@ -342,20 +348,21 @@ export default class TripItemEditView extends AbstractStatefulView {
   };
 
   #dateChangeHandler = (evt, isStartTime) => {
-    this.updateElement({
-      ...this._state,
-      [isStartTime ? 'startTime' : 'endTime']: new Date(evt),
-    });
+    if (evt.length) {
+      this.updateElement({
+        ...this._state,
+        [isStartTime ? 'startTime' : 'endTime']: new Date(evt),
+      });
+    }
   };
 
   #destinationChangeHandler = (evt) => {
     const destinationName = evt.target.value;
     const destinationData = this.#getDestinationDataByName(destinationName);
-
     evt.preventDefault();
 
     if (destinationData !== null) {
-      this.updateElement({ ...this.#point, destination: destinationData });
+      this.updateElement({ ...this._state, destination: destinationData });
     }
   };
 
