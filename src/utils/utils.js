@@ -18,18 +18,18 @@ function getIsDisabled(isDisabled) {
   return isDisabled ? 'disabled' : '';
 }
 
-function parseArrayToMap(array, key) {
+function parseArrayToMap(dataList, key) {
   const map = new Map();
-  array.forEach((object) => {
-    const id = object[key];
-    map.set(id, object);
+  dataList.forEach((element) => {
+    const id = element[key];
+    map.set(id, element);
   });
 
   return map;
 }
 
-function omit(object, ...blacklistedKeys) {
-  const result = { ...object };
+function omit(data, ...blacklistedKeys) {
+  const result = { ...data };
   blacklistedKeys.forEach((key) => {
     delete result[key];
   });

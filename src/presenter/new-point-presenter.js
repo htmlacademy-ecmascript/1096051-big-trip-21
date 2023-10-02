@@ -1,7 +1,7 @@
 import { UpdateType, UserAction } from '../const.js';
 import { RenderPosition } from '../render.js';
 import { remove, render } from '../framework/render.js';
-import TripItemEditView from '../view/trip-item-edit.js';
+import TripItemEditView from '../view/trip-item-edit-view.js';
 import { setStatus } from '../utils/utils.js';
 
 export default class NewPointPresenter {

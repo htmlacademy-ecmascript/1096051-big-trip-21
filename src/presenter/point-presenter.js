@@ -1,5 +1,5 @@
-import TripItemView from '../view/trip-item.js';
-import TripItemEditView from '../view/trip-item-edit.js';
+import TripItemView from '../view/trip-item-view.js';
+import TripItemEditView from '../view/trip-item-edit-view.js';
 import { replace, render, remove } from '../framework/render.js';
 import { Mod, UpdateType, UserAction } from '../const.js';
 import { setStatus } from '../utils/utils.js';

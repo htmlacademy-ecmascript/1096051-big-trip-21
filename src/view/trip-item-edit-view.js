@@ -317,17 +317,17 @@ export default class TripItemEditView extends AbstractStatefulView {
     const currentOfferId = evt.target.id;
     const offersMap = parseArrayToMap(this.#getOffersByType(this._state.type), 'id');
     const changedOfferData = offersMap.get(currentOfferId);
-    let offersArray = [...this._state.offers];
+    let offers = [...this._state.offers];
 
     if (!evt.target.checked) {
-      offersArray = offersArray.filter((offer) => offer.id !== currentOfferId);
+      offers = offers.filter((offer) => offer.id !== currentOfferId);
     } else {
-      offersArray.push(changedOfferData);
+      offers.push(changedOfferData);
     }
 
     this.updateElement({
       ...this._state,
-      offers: offersArray
+      offers: offers
     });
   };
 
